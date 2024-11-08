@@ -18,35 +18,25 @@
   </v-app>
 </template>
 
-<script>
-import { supabase } from "./supabase";
+<script setup>
+import { ref } from "vue"; // Import ref for reactive state
+import { supabase } from "./supabase"; // Supabase client
 
-export default {
-  name: "App",
+// Define the reactive state using `ref`
+const users = ref([]);
 
-  data() {
-    return {
-      users: [],
-    };
-  },
+// Define the `testConnection` method
+const testConnection = async () => {
+  try {
+    const { data, error } = await supabase.from("users").select("*").limit(10);
 
-  methods: {
-    async testConnection() {
-      try {
-        const { data, error } = await supabase
-          .from("u  sers")
-          .select("*")
-          .limit(10);
+    if (error) throw error;
 
-        if (error) throw error;
-
-        this.users = data;
-        console.log("Fetched users:", data);
-      } catch (error) {
-        console.error("Error fetching data:", error.message);
-      }
-    },
-  },
+    users.value = data; // Assign fetched data to the reactive state
+    console.log("Fetched users:", data);
+  } catch (error) {
+    console.error("Error fetching data:", error.message);
+  }
 };
 </script>
 
