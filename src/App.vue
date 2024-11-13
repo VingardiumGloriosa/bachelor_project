@@ -1,27 +1,45 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import Account from "./components/profile/Account.vue";
-import Auth from "./components/auth/Auth.vue";
-import HomeView from "./views/HomeView.vue";
-import { supabase } from "./supabase/supabase";
+import { ref, onMounted } from "vue";
+import { supabase } from "@/supabase/supabase";
+import { useRouter } from "vue-router";
+import NavBar from "@/components/shared/NavBar.vue";
+import TopBar from "@/components/shared/TopBar.vue";
 
-const session = ref(null);
+const router = useRouter();
+const isSignedIn = ref(false);
 
-onMounted(() => {
-  supabase.auth.getSession().then(({ data }) => {
-    session.value = data.session;
-  });
+onMounted(async () => {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  supabase.auth.onAuthStateChange((event, _session) => {
-    session.value = _session;
+  if (user) {
+    isSignedIn.value = true;
+    router.push({ name: "home" });
+  } else {
+    router.push({ name: "landing" });
+  }
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_IN" && session) {
+      console.log("User signed in: ", session.user);
+      isSignedIn.value = true;
+      router.push({ name: "home" });
+    } else if (event === "SIGNED_OUT") {
+      isSignedIn.value = false;
+      router.push({ name: "landing" });
+    }
   });
 });
 </script>
 
 <template>
-  <div class="container" style="padding: 50px 0 100px 0">
-    <HomeView v-if="session" :session="session" />
-    <Account v-if="session" :session="session" />
-    <Auth v-else />
+  <div v-if="isSignedIn">
+    <TopBar />
+    <NavBar style="margin-left: -2%; padding-right: 1%" />
   </div>
+  <router-view></router-view>
 </template>
+
+<style scoped></style>
