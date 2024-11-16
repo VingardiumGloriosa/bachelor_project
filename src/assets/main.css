@@ -5,3 +5,30 @@ body {
   margin: 0;
   font-family: Overpass, sans-serif;
 }
+
+.btn-primary {
+  padding: 26px !important;
+  gap: 10px !important;
+  background: #0561e2 !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-weight: bold !important;
+  text-transform: capitalize !important;
+  width: 100%;
+  align-content: center !important;
+  font-size: 16px !important;
+}
+
+.btn-secondary {
+  padding: 26px !important;
+  gap: 10px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid #0561e2 !important;
+  border-radius: 8px !important;
+  color: #0561e2 !important;
+  font-weight: bold !important;
+  text-transform: capitalize !important;
+  width: 100%;
+  align-content: center !important;
+  font-size: 16px !important;
+}

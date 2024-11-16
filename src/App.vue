@@ -37,7 +37,7 @@ onMounted(async () => {
 <template>
   <div v-if="isSignedIn">
     <TopBar />
-    <NavBar style="margin-left: -2%; padding-right: 1%" />
+    <NavBar style="margin-left: -2%; padding-right: 2%" />
   </div>
   <router-view></router-view>
 </template>

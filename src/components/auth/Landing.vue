@@ -1,13 +1,15 @@
 <template>
-  <div class="landing-page">
-    <h1>Welcome to the App!</h1>
-    <button @click="goToSignUp">Sign Up</button>
-    <button @click="goToSignIn">Sign In</button>
-  </div>
+  <v-container class="general">
+    <img :src="Logo" alt="App Logo" class="logo" />
+    <h1>Welcome</h1>
+    <v-btn class="btn-primary" @click="goToSignIn">Sign In</v-btn>
+    <v-btn class="btn-secondary" @click="goToSignUp">Sign Up</v-btn>
+  </v-container>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
+import Logo from "@/assets/logo.svg";
 
 const router = useRouter();
 
@@ -21,17 +23,19 @@ const goToSignIn = () => {
 </script>
 
 <style scoped>
-.landing-page {
+.general {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  padding: 0 5%;
+  gap: 20px;
 }
 
-button {
-  margin: 10px;
-  padding: 10px;
-  font-size: 16px;
+.logo {
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 20px;
 }
 </style>

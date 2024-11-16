@@ -1,31 +1,63 @@
 <template>
-  <div class="form-container">
-    <h2>Sign Up</h2>
-    <form @submit.prevent="handleSignup">
-      <input v-model="email" type="email" placeholder="Email" required />
-      <input
-        v-model="firstName"
-        type="text"
-        placeholder="First Name"
+  <arrow-back @click="close" class="backbtn" />
+  <v-container class="general">
+    <h1>Sign Up</h1>
+    <v-form @submit.prevent="handleSignup">
+      <v-text-field
+        v-model="email"
+        label="Email Address"
+        type="email"
         required
+        variant="outlined"
+        rounded="lg"
       />
-      <input v-model="lastName" type="text" placeholder="Last Name" required />
-
-      <select v-model="roleId" required>
-        <option v-for="role in roles" :key="role.role_id" :value="role.role_id">
-          {{ role.role_name }}
-        </option>
-      </select>
-
-      <button type="submit" :disabled="loading">Send Magic Link</button>
-    </form>
-  </div>
+      <v-text-field
+        v-model="firstName"
+        label="First Name"
+        type="text"
+        required
+        variant="outlined"
+        rounded="lg"
+      />
+      <v-text-field
+        v-model="lastName"
+        label="Last Name"
+        type="text"
+        required
+        variant="outlined"
+        rounded="lg"
+      />
+      <v-select
+        class="style-chooser"
+        v-model="roleId"
+        :items="roles"
+        item-text="role_name"
+        item-value="role_id"
+        label="Role"
+        required
+        variant="outlined"
+        rounded="lg"
+      />
+      <v-btn
+        class="btn-primary"
+        :loading="loading"
+        :disabled="loading"
+        type="submit"
+        rounded
+      >
+        Continue
+      </v-btn>
+      <p class="text-center">Already have an account?</p>
+      <p class="text-center text-grey" @click="signin">Sign In</p>
+    </v-form>
+  </v-container>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { supabase } from "@/supabase/supabase";
 import { useRouter } from "vue-router";
+import ArrowBack from "../shared/ArrowBack.vue";
 
 const email = ref("");
 const firstName = ref("");
@@ -38,6 +70,7 @@ const router = useRouter();
 const fetchRoles = async () => {
   try {
     const { data, error } = await supabase.from("roles").select("*");
+    console.log(data);
     if (error) throw error;
     roles.value = data;
   } catch (error) {
@@ -71,4 +104,41 @@ const handleSignup = async () => {
     loading.value = false;
   }
 };
+
+function close() {
+  router.back();
+}
+
+const signin = () => {
+  router.push("/signin");
+};
 </script>
+
+<style scoped>
+.general {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 0 5%;
+  gap: 20px;
+}
+
+.v-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.backbtn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.text-center {
+  text-align: center;
+  cursor: pointer;
+}
+</style>
