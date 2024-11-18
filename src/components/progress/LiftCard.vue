@@ -22,10 +22,8 @@
 </template>
 
 <script setup lang="ts">
-// Import ref from Vue to create reactive state
 import { ref } from "vue";
 
-// Define reactive state inside setup() function
 const snatchRecords = ref([
   { reps: "1RM", weight: 120, date: "2023-11-01" },
   { reps: "2RM", weight: 115, date: "2023-10-15" },
