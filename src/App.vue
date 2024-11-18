@@ -35,11 +35,27 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="isSignedIn">
-    <TopBar />
-    <NavBar style="margin-left: -2%; padding-right: 2%" />
+  <div id="app-wrapper">
+    <div v-if="isSignedIn">
+      <TopBar />
+      <NavBar />
+    </div>
+    <div id="main-content">
+      <router-view />
+    </div>
   </div>
-  <router-view></router-view>
 </template>
+<style scoped>
+#app-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-<style scoped></style>
+#main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 56px;
+}
+</style>

@@ -1,10 +1,18 @@
 <template>
   <div class="home-container">
-    <h1>Welcome to the App</h1>
-    <p>This is the home page after logging in or signing up.</p>
+    <HomeHighlight />
+    <TitleAndMore title="Goal Progress" />
+    <GoalProgress />
+    <TitleAndMore title="Programmes" />
+    <Programmes />
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import HomeHighlight from "@/components/home/HomeHighlight.vue";
+import GoalProgress from "@/components/home/GoalProgress.vue";
+import Programmes from "@/components/home/Programmes.vue";
+import TitleAndMore from "@/components/shared/TitleAndMore.vue";
+</script>
 
 <style scoped></style>

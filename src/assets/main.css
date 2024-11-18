@@ -3,7 +3,7 @@ body {
   background-color: #151515;
   color: #fff;
   margin: 0;
-  font-family: Overpass, sans-serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .btn-primary {
@@ -31,4 +31,12 @@ body {
   width: 100%;
   align-content: center !important;
   font-size: 16px !important;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 5%;
+  gap: 20px;
 }

@@ -30,13 +30,13 @@
       <v-select
         class="style-chooser"
         v-model="roleId"
-        :items="roles"
-        item-text="role_name"
-        item-value="role_id"
+        :items="roles.value"
         label="Role"
         required
         variant="outlined"
         rounded="lg"
+        item-text="role_name"
+        item-value="role_id"
       />
       <v-btn
         class="btn-primary"
@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { supabase } from "@/supabase/supabase";
 import { useRouter } from "vue-router";
 import ArrowBack from "../shared/ArrowBack.vue";
@@ -67,18 +67,24 @@ const roles = ref([]);
 const loading = ref(false);
 const router = useRouter();
 
+//TO FIX
 const fetchRoles = async () => {
   try {
     const { data, error } = await supabase.from("roles").select("*");
-    console.log(data);
     if (error) throw error;
     roles.value = data;
+    console.log("Fetched roles:", roles.value);
   } catch (error) {
     console.error("Error fetching roles:", error.message);
   }
 };
 
+watch(roleId, (newValue) => {
+  console.log("Selected roleId:", newValue);
+});
+
 onMounted(() => {
+  console.log("Component mounted, fetching roles...");
   fetchRoles();
 });
 
@@ -106,7 +112,7 @@ const handleSignup = async () => {
 };
 
 function close() {
-  router.back();
+  router.push("/");
 }
 
 const signin = () => {

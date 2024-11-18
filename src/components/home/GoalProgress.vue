@@ -1,12 +1,11 @@
 <template>
   <div class="home-container">
-    <h1>Programmes</h1>
-    <Programmes />
+    <Carousel />
   </div>
 </template>
 
 <script setup>
-import Programmes from "@/components/home/Programmes.vue";
+import Carousel from "@/components/shared/Carousel.vue";
 </script>
 
 <style scoped></style>

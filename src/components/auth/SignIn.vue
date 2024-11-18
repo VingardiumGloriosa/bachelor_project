@@ -51,7 +51,7 @@ const handleLogin = async () => {
 };
 
 function close() {
-  router.back();
+  router.push("/");
 }
 
 const signup = () => {
