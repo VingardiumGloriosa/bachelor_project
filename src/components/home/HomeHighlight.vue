@@ -17,7 +17,7 @@
     rgba(5, 97, 226, 1) 0%,
     rgba(150, 151, 152, 1) 100%
   );
-  border-radius: 8px;
+  border-radius: 16px;
   margin-top: 5%;
 }
 

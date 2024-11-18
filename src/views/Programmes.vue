@@ -1,12 +1,12 @@
 <template>
   <div class="home-container">
     <h1>Programmes</h1>
-    <Programmes />
+    <ProgrammeList />
   </div>
 </template>
 
-<script setup>
-import Programmes from "@/components/home/Programmes.vue";
+<script setup lang="ts">
+import ProgrammeList from "@/components/shared/ProgrammeList.vue";
 </script>
 
 <style scoped></style>

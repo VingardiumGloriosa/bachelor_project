@@ -25,7 +25,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { supabase } from "@/supabase/supabase";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";

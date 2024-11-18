@@ -12,7 +12,7 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import CustomRectangle from "@/components/shared/ProgressCard.vue";
 
@@ -42,6 +42,7 @@ const selected = ref(0);
 
 .v-container {
   padding: 0;
+  margin: 0;
 }
 ::v-deep .v-slide-group__content {
   gap: 10px !important;

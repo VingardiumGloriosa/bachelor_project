@@ -13,31 +13,24 @@
     </div>
 
     <div id="programs">
-      <Program
+      <ProgrammeCard
         v-for="program in filteredPrograms"
         :key="program.id"
-        :date="program.date"
+        :date="program.name"
         class="mb-4"
       />
     </div>
   </div>
 </template>
-
-<script setup>
-import Program from "./Program.vue";
-import { ref, computed } from "vue";
-
-const programs = [
-  { id: 1, date: "2024-10-01" },
-  { id: 2, date: new Date().toISOString().split("T")[0] },
-  { id: 3, date: "2024-10-05" },
-  { id: 4, date: "2024-11-01" },
-  { id: 5, date: "2024-12-25" },
-  { id: 6, date: "2024-01-01" },
-];
+<script setup lang="ts">
+import ProgrammeCard from "./ProgrammeCard.vue";
+import { ref, computed, onMounted } from "vue";
+import { useUserStore } from "@/stores/userStore";
+import { useProgrammeStore } from "@/stores/programmeStore";
 
 const filterOptions = [
   "All",
+  "Mine",
   "Today",
   "This Week",
   "This Month",
@@ -46,9 +39,20 @@ const filterOptions = [
 ];
 const activeFilter = ref("All");
 
-const setFilter = (filter) => {
+const setFilter = (filter: string) => {
   activeFilter.value = filter;
 };
+
+const userStore = useUserStore();
+const programmeStore = useProgrammeStore();
+
+onMounted(async () => {
+  await userStore.loadUser();
+  if (userStore.user) {
+    const userId = userStore.user.id;
+    await programmeStore.loadProgrammes(userId);
+  }
+});
 
 const filteredPrograms = computed(() => {
   const today = new Date();
@@ -68,66 +72,33 @@ const filteredPrograms = computed(() => {
 
   switch (activeFilter.value) {
     case "Today":
-      return programs.filter(
+      return programmeStore.programmes.filter(
         (p) => p.date === today.toISOString().split("T")[0]
       );
     case "This Week":
-      return programs.filter((p) => {
+      return programmeStore.programmes.filter((p) => {
         const programDate = new Date(p.date);
         return programDate >= weekStart && programDate <= weekEnd;
       });
     case "This Month":
-      return programs.filter((p) => {
+      return programmeStore.programmes.filter((p) => {
         const programDate = new Date(p.date);
         return programDate >= monthStart && programDate <= monthEnd;
       });
     case "Next Month":
-      return programs.filter((p) => {
+      return programmeStore.programmes.filter((p) => {
         const programDate = new Date(p.date);
         return programDate >= nextMonthStart && programDate <= nextMonthEnd;
       });
     case "This Year":
-      return programs.filter((p) => {
+      return programmeStore.programmes.filter((p) => {
         const programDate = new Date(p.date);
         return programDate >= yearStart && programDate <= yearEnd;
       });
+    case "Personal Programmes":
+      return programmeStore.programmes.filter((p) => isNaN(Number(p.name)));
     default:
-      return programs;
+      return programmeStore.programmes;
   }
 });
 </script>
-<style scoped>
-#filter-chips {
-  display: flex;
-  overflow-x: auto;
-  gap: 8px;
-  padding: 16px 0;
-  white-space: nowrap;
-  scroll-behavior: smooth;
-}
-
-.chip {
-  flex: 0 0 auto;
-  padding: 8px 16px;
-  border: 1px solid #272640;
-  color: #9b9bc2;
-  background-color: var(--dark-grey) !important;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: background 0.3s, color 0.3s;
-}
-
-.chip.active {
-  border: 1px solid var(--primary);
-  color: var(--primary);
-}
-
-#filter-chips::-webkit-scrollbar {
-  display: none;
-}
-
-#filter-chips {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-</style>

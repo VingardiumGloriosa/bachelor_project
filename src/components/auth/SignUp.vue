@@ -53,7 +53,7 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { supabase } from "@/supabase/supabase";
 import { useRouter } from "vue-router";

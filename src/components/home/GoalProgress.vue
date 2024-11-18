@@ -1,10 +1,8 @@
 <template>
-  <div class="home-container">
-    <Carousel />
-  </div>
+  <Carousel />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Carousel from "@/components/shared/Carousel.vue";
 </script>
 

@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Title from "./Title.vue";
 
 const props = defineProps({
@@ -36,7 +36,7 @@ const props = defineProps({
   justify-content: center;
   align-items: center;
   font-size: 1.2em;
-  border-radius: 8px;
+  border-radius: 16px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 

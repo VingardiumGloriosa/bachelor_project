@@ -10,7 +10,7 @@ body {
   padding: 26px !important;
   gap: 10px !important;
   background: #0561e2 !important;
-  border-radius: 8px !important;
+  border-radius: 16px !important;
   color: white !important;
   font-weight: bold !important;
   text-transform: capitalize !important;
@@ -24,7 +24,7 @@ body {
   gap: 10px !important;
   background: rgba(255, 255, 255, 0.04) !important;
   border: 1px solid #0561e2 !important;
-  border-radius: 8px !important;
+  border-radius: 16px !important;
   color: #0561e2 !important;
   font-weight: bold !important;
   text-transform: capitalize !important;
@@ -39,4 +39,38 @@ body {
   justify-content: center;
   padding: 0 5%;
   gap: 20px;
+}
+
+#filter-chips {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 16px 0;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+}
+
+.chip {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  border: 1px solid #272640;
+  color: #9b9bc2;
+  background-color: var(--dark-grey) !important;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.chip.active {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+#filter-chips::-webkit-scrollbar {
+  display: none;
+}
+
+#filter-chips {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
