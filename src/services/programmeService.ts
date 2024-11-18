@@ -1,29 +1,5 @@
 import { supabase } from "@/supabase/supabase";
-
-interface Programme {
-  programme_id: string;
-  name: string;
-  workouts: Array<Workout>;
-}
-
-interface Workout {
-  workout_id: string;
-  name: string;
-  exercises: Array<Exercise>;
-}
-
-interface Exercise {
-  exercise_id: string;
-  name: string;
-  sets: Array<Set>;
-}
-
-interface Set {
-  set_id: string;
-  reps: number;
-  weight: number;
-  is_max: boolean;
-}
+import { type Programme } from "@/components/types/programmeTypes";
 
 export const fetchUserProgrammes = async (
   userId: string
@@ -41,5 +17,26 @@ export const fetchUserProgrammes = async (
   } catch (error) {
     console.error("Error fetching programmes:", (error as Error).message);
     return null;
+  }
+};
+
+export const fetchProgrammeDetails = async (
+  programmeId: string
+): Promise<any> => {
+  try {
+    const { data, error } = await supabase.rpc("get_programme_details", {
+      programme: programmeId,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data;
+  } catch (error) {
+    console.error(
+      "Error fetching programme details:",
+      (error as Error).message
+    );
+    throw error;
   }
 };

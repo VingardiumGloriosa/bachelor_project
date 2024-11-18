@@ -7,6 +7,7 @@ import Programmes from "../views/Programmes.vue";
 import SignUpPage from "@/components/auth/SignUp.vue";
 import SignInPage from "@/components/auth/SignIn.vue";
 import Landing from "@/components/auth/Landing.vue";
+import ProgrammeDetail from "@/components/programmes/ProgrammeDetail.vue";
 import { supabase } from "@/supabase/supabase";
 
 const routes = [
@@ -47,6 +48,12 @@ const routes = [
     path: "/programmes",
     name: "programmes",
     component: Programmes,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/programmes/:id",
+    name: "programme", // This should match the name used in router.push()
+    component: ProgrammeDetail,
     meta: { requiresAuth: true },
   },
   {

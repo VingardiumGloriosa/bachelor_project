@@ -18,6 +18,7 @@
         :key="program.id"
         :date="program.name"
         class="mb-4"
+        @click="goToProgrammeDetail(program.programme_id)"
       />
     </div>
   </div>
@@ -25,8 +26,11 @@
 <script setup lang="ts">
 import ProgrammeCard from "./ProgrammeCard.vue";
 import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 import { useProgrammeStore } from "@/stores/programmeStore";
+
+const router = useRouter(); //
 
 const filterOptions = [
   "All",
@@ -101,4 +105,8 @@ const filteredPrograms = computed(() => {
       return programmeStore.programmes;
   }
 });
+
+const goToProgrammeDetail = (programmeId: string) => {
+  router.push({ name: "programme", params: { id: programmeId } });
+};
 </script>
