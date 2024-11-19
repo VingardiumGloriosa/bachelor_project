@@ -18,7 +18,7 @@
         :key="program.id"
         :date="program.name"
         class="mb-4"
-        @click="goToProgrammeDetail(program.programme_id)"
+        @click="goToProgrammeDetail(program.programme_id, program.name)"
       />
     </div>
   </div>
@@ -30,7 +30,7 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 import { useProgrammeStore } from "@/stores/programmeStore";
 
-const router = useRouter(); //
+const router = useRouter();
 
 const filterOptions = [
   "All",
@@ -106,7 +106,10 @@ const filteredPrograms = computed(() => {
   }
 });
 
-const goToProgrammeDetail = (programmeId: string) => {
-  router.push({ name: "programme", params: { id: programmeId } });
+const goToProgrammeDetail = (programmeId: string, programmeTitle: string) => {
+  router.push({
+    name: "programme",
+    params: { id: programmeId, title: programmeTitle },
+  });
 };
 </script>

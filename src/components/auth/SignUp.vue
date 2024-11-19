@@ -30,12 +30,12 @@
       <v-select
         class="style-chooser"
         v-model="roleId"
-        :items="roles.value"
+        :items="roles"
         label="Role"
         required
         variant="outlined"
         rounded="lg"
-        item-text="role_name"
+        item-title="role_name"
         item-value="role_id"
       />
       <v-btn

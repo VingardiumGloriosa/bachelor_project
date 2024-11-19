@@ -8,6 +8,7 @@ import SignUpPage from "@/components/auth/SignUp.vue";
 import SignInPage from "@/components/auth/SignIn.vue";
 import Landing from "@/components/auth/Landing.vue";
 import ProgrammeDetail from "@/components/programmes/ProgrammeDetail.vue";
+import NewProgramme from "@/components/programmes/NewProgramme.vue";
 import { supabase } from "@/supabase/supabase";
 
 const routes = [
@@ -51,9 +52,15 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/programmes/:id",
-    name: "programme", // This should match the name used in router.push()
+    path: "/programmes/:id:title",
+    name: "programme",
     component: ProgrammeDetail,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/new-programme",
+    name: "new-programme",
+    component: NewProgramme,
     meta: { requiresAuth: true },
   },
   {
@@ -69,16 +76,23 @@ const router = createRouter({
   routes,
 });
 
+let isValidatingSession = false;
+
 router.beforeEach(async (to, from, next) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (isValidatingSession) return next();
+  isValidatingSession = true;
 
   if (to.meta.requiresAuth && !user) {
     next({ name: "signin" });
   } else {
     next();
   }
+
+  isValidatingSession = false;
 });
 
 export default router;

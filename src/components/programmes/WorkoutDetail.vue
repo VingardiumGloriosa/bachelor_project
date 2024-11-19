@@ -1,7 +1,6 @@
 <template>
   <v-container class="lift-card" v-if="workout && workout.workout_exercises">
     <h3 class="table-title">{{ workout.name }}</h3>
-
     <div
       v-for="workoutExercise in workout.workout_exercises"
       :key="workoutExercise.workout_exercise_id"
@@ -37,8 +36,8 @@
     </div>
 
     <div class="button-container">
-      <v-btn class="btn-add" @click="addSet">+ Add Set</v-btn>
-      <v-btn class="btn-add" @click="addComment">+ Add Comment</v-btn>
+      <v-btn class="btn-small" @click="addSet">+ Add Set</v-btn>
+      <v-btn class="btn-small" @click="addComment">+ Add Comment</v-btn>
     </div>
   </v-container>
 </template>
@@ -51,9 +50,9 @@ const props = defineProps<{
   workout: Workout;
 }>();
 
-console.log(props.workout);
-
-const addSet = () => {};
+const addSet = () => {
+  alert("Add your pr here...");
+};
 
 const addComment = () => {
   alert("Add your comment here...");
@@ -82,15 +81,6 @@ const addComment = () => {
 .v-table td {
   border-top: 2px solid white;
   border-bottom: 2px solid white;
-}
-
-.btn-add {
-  background-color: white;
-  color: black;
-  border-radius: 16px;
-  font-weight: 600;
-  margin-top: 16px;
-  text-transform: capitalize;
 }
 
 .v-text-field {

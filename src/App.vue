@@ -14,10 +14,12 @@ onMounted(async () => {
     error,
   } = await supabase.auth.getUser();
 
-  if (user) {
+  const currentRoute = router.currentRoute.value.name;
+
+  if (user && currentRoute !== "home") {
     isSignedIn.value = true;
     router.push({ name: "home" });
-  } else {
+  } else if (!user && currentRoute !== "landing") {
     router.push({ name: "landing" });
   }
 
@@ -25,10 +27,14 @@ onMounted(async () => {
     if (event === "SIGNED_IN" && session) {
       console.log("User signed in: ", session.user);
       isSignedIn.value = true;
-      router.push({ name: "home" });
+      if (router.currentRoute.value.name !== "home") {
+        router.push({ name: "home" });
+      }
     } else if (event === "SIGNED_OUT") {
       isSignedIn.value = false;
-      router.push({ name: "landing" });
+      if (router.currentRoute.value.name !== "landing") {
+        router.push({ name: "landing" });
+      }
     }
   });
 });
@@ -45,6 +51,7 @@ onMounted(async () => {
     </div>
   </div>
 </template>
+
 <style scoped>
 #app-wrapper {
   height: 100vh;
