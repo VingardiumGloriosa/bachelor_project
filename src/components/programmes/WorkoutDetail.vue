@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { type Workout } from "@/components/types/programmeTypes";
+import { type Workout } from "@/components/types/ProgrammeTypes";
 
 const props = defineProps<{
   workout: Workout;

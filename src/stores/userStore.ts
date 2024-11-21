@@ -1,22 +1,17 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { supabase } from "@/supabase/supabase";
-
-interface User {
-  id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-}
+import { fetchCurrentUser, type User } from "@/services/UserService";
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<User | null>(null);
 
   const loadUser = async () => {
-    const {
-      data: { user: currentUser },
-    } = await supabase.auth.getUser();
-    user.value = currentUser;
+    try {
+      user.value = await fetchCurrentUser();
+    } catch (error) {
+      console.error("Error loading user:", (error as Error).message);
+      user.value = null;
+    }
   };
 
   return {

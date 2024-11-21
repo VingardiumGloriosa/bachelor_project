@@ -27,8 +27,8 @@
 import ProgrammeCard from "./ProgrammeCard.vue";
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/userStore";
-import { useProgrammeStore } from "@/stores/programmeStore";
+import { useUserStore } from "@/stores/UserStore";
+import { useProgrammeStore } from "@/stores/ProgrammeStore";
 
 const router = useRouter();
 

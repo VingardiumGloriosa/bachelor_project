@@ -4,6 +4,7 @@ import { supabase } from "@/supabase/supabase";
 import { useRouter } from "vue-router";
 import NavBar from "@/components/shared/NavBar.vue";
 import TopBar from "@/components/shared/TopBar.vue";
+import { VSonner } from "vuetify-sonner";
 
 const router = useRouter();
 const isSignedIn = ref(false);
@@ -47,6 +48,8 @@ onMounted(async () => {
       <NavBar />
     </div>
     <div id="main-content">
+      <VSonner position="top-right" />
+
       <router-view />
     </div>
   </div>

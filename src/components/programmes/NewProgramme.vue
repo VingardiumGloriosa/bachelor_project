@@ -36,13 +36,14 @@
         <v-select
           label="Exercise"
           v-model="exercise.exercise_id"
-          :items="exercises"
+          :items="programmeStore.exercises"
           item-title="name"
           item-value="exercise_id"
           placeholder="Select exercise"
           dense
           class="mb-2"
         />
+
         <v-table>
           <thead>
             <tr>
@@ -91,56 +92,38 @@
       >
     </div>
     <v-btn small @click="addWorkout" class="mb-4">+ Add Workout</v-btn>
-    <v-btn class="btn-submit mt-4" color="primary" @click="submitProgramme">
+    <v-btn
+      class="btn-submit mt-4"
+      color="primary"
+      @click="submitProgrammeHandler"
+    >
       Submit Programme
     </v-btn>
-    <v-alert
-      v-if="status"
-      :type="status.includes('Error') ? 'error' : 'success'"
-      class="mt-4"
-    >
-      {{ status }}
-    </v-alert>
-    <v-alert v-if="programmeId" type="info" class="mt-2">
-      Programme ID: {{ programmeId }}
-    </v-alert>
   </v-container>
 </template>
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
-import { supabase } from "@/supabase/supabase";
-//to be remade to use stores instead of a lot of shit in one file
+import { type Programme } from "@/components/types/ProgrammeTypes";
+import { useProgrammeStore } from "@/stores/ProgrammeStore";
+import { useUserStore } from "@/stores/UserStore";
+import router from "@/router";
+import { useToastStore, ToastType } from "@/stores/ToastStore";
 
-const exercises = ref<any[]>([]);
+/*
+TO ADD
+You should not be able to add a programme without a title
+You should not be able to add a workout without a title
+You should not be able to add an exercise without adding reps and sets to it
+Styling
+*/
+
+const programmeStore = useProgrammeStore();
+const userStore = useUserStore();
+const toastStore = useToastStore();
 
 onMounted(async () => {
-  try {
-    const { data, error } = await supabase.rpc("fetch_exercises");
-    if (error) {
-      console.error("Error fetching exercises:", error.message);
-    } else {
-      exercises.value = data || [];
-    }
-  } catch (err) {
-    console.error("Unexpected error:", err);
-  }
+  programmeStore.fetchExercises();
 });
-
-interface Programme {
-  name: string;
-  type: string;
-  workouts: Array<{
-    name: string;
-    workout_exercises: Array<{
-      exercise_id: string;
-      exercise_order: number;
-      sets: Array<{
-        reps: number | null;
-        percentage: number | null;
-      }>;
-    }>;
-  }>;
-}
 
 const programme = reactive<Programme>({
   name: "",
@@ -148,8 +131,93 @@ const programme = reactive<Programme>({
   workouts: [],
 });
 
-const programmeId = ref<string | null>(null);
-const status = ref<string | null>(null);
+const validateProgramme = (programme: Programme): string[] => {
+  const errors: string[] = [];
+
+  if (!programme.name.trim()) {
+    errors.push("Programme must have a name.");
+  }
+
+  if (programme.workouts.length === 0) {
+    errors.push("Programme must have at least one workout.");
+  } else {
+    programme.workouts.forEach((workout, workoutIndex) => {
+      if (!workout.name.trim()) {
+        errors.push(`Workout ${workoutIndex + 1} must have a name.`);
+      }
+
+      if (workout.workout_exercises.length === 0) {
+        errors.push(
+          `Workout ${workoutIndex + 1} must have at least one exercise.`
+        );
+      } else {
+        workout.workout_exercises.forEach((exercise, exerciseIndex) => {
+          if (!exercise.exercise_id) {
+            errors.push(
+              `Exercise ${exerciseIndex + 1} in Workout ${
+                workoutIndex + 1
+              } must be selected.`
+            );
+          }
+
+          if (exercise.sets.length === 0) {
+            errors.push(
+              `Exercise ${exerciseIndex + 1} in Workout ${
+                workoutIndex + 1
+              } must have at least one set.`
+            );
+          } else {
+            exercise.sets.forEach((set, setIndex) => {
+              if (set.reps === null || set.reps <= 0) {
+                errors.push(
+                  `Set ${setIndex + 1} in Exercise ${
+                    exerciseIndex + 1
+                  } in Workout ${
+                    workoutIndex + 1
+                  } must have a valid number of reps.`
+                );
+              }
+              if (set.percentage === null || set.percentage <= 0) {
+                errors.push(
+                  `Set ${setIndex + 1} in Exercise ${
+                    exerciseIndex + 1
+                  } in Workout ${
+                    workoutIndex + 1
+                  } must have a valid percentage.`
+                );
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+
+  return errors;
+};
+
+const submitProgrammeHandler = async () => {
+  try {
+    const validationErrors = validateProgramme(programme);
+    console.log(programme);
+    if (validationErrors.length > 0) {
+      validationErrors.forEach((error) => {
+        toastStore.toast(error, ToastType.ERROR);
+      });
+      return;
+    }
+
+    await programmeStore.submitProgramme(
+      programme,
+      userStore.user?.id as string
+    );
+    toastStore.toast("Programme submitted successfully!", ToastType.SUCCESS);
+    router.push({ name: "home" });
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    toastStore.toast("Unexpected error occurred.", ToastType.ERROR);
+  }
+};
 
 const addWorkout = () => {
   programme.workouts.push({
@@ -192,36 +260,6 @@ const removeExercise = (workoutIndex: number, exerciseIndex: number) => {
   workout.workout_exercises.forEach((exercise, index) => {
     exercise.exercise_order = index + 1;
   });
-};
-
-const submitProgramme = async () => {
-  try {
-    console.log("Submitting programme:", JSON.stringify(programme, null, 2));
-    const { data, error } = await supabase.rpc("create_programme", {
-      programme_name: programme.name,
-      programme_type: programme.type,
-      user_uuid: "0aab1c6b-009e-40e0-b64b-a9f8a206b2aa",
-      workouts: programme.workouts.map((workout) => ({
-        ...workout,
-        workout_exercises: workout.workout_exercises.map((exercise) => ({
-          exercise_id: exercise.exercise_id,
-          exercise_order: exercise.exercise_order,
-          sets: exercise.sets,
-        })),
-      })),
-    });
-
-    if (error) {
-      console.error("Error:", error.message);
-      status.value = `Error: ${error.message}`;
-    } else {
-      status.value = data?.status || "Unknown status";
-      programmeId.value = data?.programme_id || null;
-    }
-  } catch (err) {
-    console.error("Unexpected error:", err);
-    status.value = "Unexpected error occurred";
-  }
 };
 </script>
 <style scoped>

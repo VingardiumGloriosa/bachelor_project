@@ -23,7 +23,7 @@ Only usses workout name but not wokrout exercise name
 */
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { useProgrammeStore } from "@/stores/programmeStore";
+import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import WorkoutDetail from "@/components/programmes/WorkoutDetail.vue";
 import Title from "@/components/shared/Title.vue";
 

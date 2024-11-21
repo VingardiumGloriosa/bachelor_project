@@ -1,9 +1,18 @@
 export interface Programme {
-  programme_id: string;
   name: string;
-  workouts: Array<Workout>;
+  type: string;
+  workouts: Array<{
+    name: string;
+    workout_exercises: Array<{
+      exercise_id: string;
+      exercise_order: number;
+      sets: Array<{
+        reps: number | null;
+        percentage: number | null;
+      }>;
+    }>;
+  }>;
 }
-
 export interface Workout {
   workout_id: string;
   name: string;
