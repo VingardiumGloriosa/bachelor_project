@@ -2,7 +2,8 @@
   <arrow-back @click="close" class="backbtn" />
   <v-container class="general">
     <h1>Sign Up</h1>
-    <v-form @submit.prevent="handleSignup">
+    <!-- Use a handler function in @submit.prevent -->
+    <v-form @submit.prevent="handleSubmit">
       <v-text-field
         v-model="email"
         label="Email Address"
@@ -30,7 +31,7 @@
       <v-select
         class="style-chooser"
         v-model="roleId"
-        :items="roles"
+        :items="userStore.roles"
         label="Role"
         required
         variant="outlined"
@@ -54,8 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
-import { supabase } from "@/supabase/supabase";
+import { ref, onMounted } from "vue";
+import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "vue-router";
 import ArrowBack from "../shared/ArrowBack.vue";
 
@@ -63,49 +64,29 @@ const email = ref("");
 const firstName = ref("");
 const lastName = ref("");
 const roleId = ref(null);
-const roles = ref([]);
 const loading = ref(false);
 const router = useRouter();
 
-//TO FIX
-const fetchRoles = async () => {
-  try {
-    const { data, error } = await supabase.from("roles").select("*");
-    if (error) throw error;
-    roles.value = data;
-    console.log("Fetched roles:", roles.value);
-  } catch (error) {
-    console.error("Error fetching roles:", error.message);
-  }
-};
-
-watch(roleId, (newValue) => {
-  console.log("Selected roleId:", newValue);
-});
+const userStore = useUserStore();
 
 onMounted(() => {
-  console.log("Component mounted, fetching roles...");
-  fetchRoles();
+  userStore.fetchRoles();
 });
 
-const handleSignup = async () => {
+const handleSubmit = async () => {
   try {
     loading.value = true;
-    const { error } = await supabase.auth.signInWithOtp({ email: email.value });
-    if (error) throw error;
 
-    sessionStorage.setItem(
-      "userDetails",
-      JSON.stringify({
-        firstName: firstName.value,
-        lastName: lastName.value,
-        roleId: roleId.value,
-      })
-    );
+    await userStore.signupUser({
+      email: email.value,
+      firstName: firstName.value,
+      lastName: lastName.value,
+      roleId: roleId.value,
+    });
 
     alert("Check your email for a magic link to complete sign-up!");
   } catch (error) {
-    console.error("Error sending magic link:", error.message);
+    console.error("Error during sign-up:", error.message);
   } finally {
     loading.value = false;
   }
