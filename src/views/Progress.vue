@@ -1,8 +1,7 @@
 <template>
   <div class="home-container">
     <h1>Progress</h1>
-    <!-- Assuming you're using V-Select from Vuetify -->
-    <v-select
+    <v-autocomplete
       label="Select Exercise"
       variant="underlined"
       :items="exercises"
