@@ -199,7 +199,6 @@ const validateProgramme = (programme: Programme): string[] => {
 const submitProgrammeHandler = async () => {
   try {
     const validationErrors = validateProgramme(programme);
-    console.log(programme);
     if (validationErrors.length > 0) {
       validationErrors.forEach((error) => {
         toastStore.toast(error, ToastType.ERROR);

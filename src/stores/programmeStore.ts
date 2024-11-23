@@ -5,8 +5,12 @@ import {
   fetchProgrammeDetails,
   submitProgrammeService,
   fetchExercisesService,
+  submitSetService,
 } from "@/services/ProgrammeService";
-import { type Programme } from "@/components/types/ProgrammeTypes";
+import {
+  type Programme,
+  type Workout,
+} from "@/components/types/ProgrammeTypes";
 
 interface Exercise {
   name: string;
@@ -97,6 +101,27 @@ export const useProgrammeStore = defineStore("programme", () => {
       isLoading.value = false;
     }
   };
+
+  const submitSet = async (
+    workouts: Workout[],
+    userId: string
+  ): Promise<void> => {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await submitSetService(workouts, userId);
+
+      if (response) {
+        status.value = response.status;
+      }
+    } catch (err) {
+      error.value = (err as Error).message;
+      console.error("Error in store:", error.value);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     programmes,
     isLoading,
@@ -109,5 +134,6 @@ export const useProgrammeStore = defineStore("programme", () => {
     selectedProgramme,
     fetchExercises,
     exercises,
+    submitSet,
   };
 });

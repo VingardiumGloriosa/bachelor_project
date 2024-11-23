@@ -21,7 +21,6 @@ const isValidDate = (dateString: string) => {
 };
 
 const dayOfWeek = computed(() => {
-  // Check if the date is valid
   if (isValidDate(props.date)) {
     const dateObj = new Date(props.date);
     const days = [

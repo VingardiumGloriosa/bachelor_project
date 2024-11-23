@@ -1,4 +1,4 @@
-// To do add a resable link based on where we want to route on the see all
+// To do add a reusable link based on where we want to route on the see all
 <template>
   <v-container>
     <h1>{{ title }}</h1>

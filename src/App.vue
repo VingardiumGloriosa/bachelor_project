@@ -26,7 +26,6 @@ onMounted(async () => {
 
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === "SIGNED_IN" && session) {
-      console.log("User signed in: ", session.user);
       isSignedIn.value = true;
       if (router.currentRoute.value.name !== "home") {
         router.push({ name: "home" });

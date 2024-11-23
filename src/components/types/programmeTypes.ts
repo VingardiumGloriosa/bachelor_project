@@ -9,6 +9,7 @@ export interface Programme {
       sets: Array<{
         reps: number | null;
         percentage: number | null;
+        success: boolean | null;
       }>;
     }>;
   }>;
@@ -16,7 +17,7 @@ export interface Programme {
 export interface Workout {
   workout_id: string;
   name: string;
-  exercises: Array<Exercise>;
+  workout_exercises: Array<Exercise>;
 }
 
 export interface Exercise {

@@ -73,18 +73,12 @@ const fetchRoles = async () => {
     const { data, error } = await supabase.from("roles").select("*");
     if (error) throw error;
     roles.value = data;
-    console.log("Fetched roles:", roles.value);
   } catch (error) {
     console.error("Error fetching roles:", error.message);
   }
 };
 
-watch(roleId, (newValue) => {
-  console.log("Selected roleId:", newValue);
-});
-
 onMounted(() => {
-  console.log("Component mounted, fetching roles...");
   fetchRoles();
 });
 

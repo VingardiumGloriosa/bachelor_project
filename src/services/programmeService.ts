@@ -1,5 +1,8 @@
 import { supabase } from "@/supabase/supabase";
-import { type Programme } from "@/components/types/ProgrammeTypes";
+import {
+  type Programme,
+  type Workout,
+} from "@/components/types/ProgrammeTypes";
 
 export const fetchUserProgrammes = async (
   userId: string
@@ -86,5 +89,57 @@ export const fetchExercisesService = async (): Promise<any> => {
   } catch (error) {
     console.error("Error fetching exercises:", (error as Error).message);
     throw error;
+  }
+};
+
+/*
+TO ADD TOASTS
+*/
+export const submitSetService = async (
+  workouts: Workout[],
+  userId: string
+): Promise<{ status: string } | null> => {
+  try {
+    const workoutsPlain = workouts.map((workout) =>
+      JSON.parse(JSON.stringify(workout))
+    );
+    const workoutPayload = workoutsPlain.map((workout) => {
+      if (!Array.isArray(workout.workout_exercises)) {
+        console.error(
+          "Error: workout_exercises is not an array or is undefined for workout",
+          workout.workout_id
+        );
+        throw new Error("Invalid workout structure");
+      }
+
+      const workoutExercises = workout.workout_exercises.map((exercise) => ({
+        exercise: exercise.exercise,
+        sets: exercise.sets.map((set) => ({
+          set_id: set.set_id,
+          weight: set.weight,
+          reps: set.reps,
+          success: set.success,
+        })),
+      }));
+
+      return {
+        workout_id: workout.workout_id,
+        workout_exercises: workoutExercises,
+      };
+    });
+    const { data, error } = await supabase.rpc("submit_workout_setlogs", {
+      user_id: userId,
+      workouts: workoutPayload,
+    });
+
+    if (error) {
+      console.error("Error in RPC call:", error);
+      return { status: "Error" };
+    }
+
+    return { status: "Success" };
+  } catch (error) {
+    console.error("Error in submitSetService:", error);
+    return { status: "Error" };
   }
 };

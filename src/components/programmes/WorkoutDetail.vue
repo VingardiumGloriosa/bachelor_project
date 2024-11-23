@@ -36,24 +36,36 @@
     </div>
 
     <div class="button-container">
+      <!-- Buttons to be implemented -->
       <v-btn class="btn-small" @click="addSet">+ Add Set</v-btn>
       <v-btn class="btn-small" @click="addComment">+ Add Comment</v-btn>
     </div>
   </v-container>
 </template>
-
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, defineEmits, watch } from "vue";
 import { type Workout } from "@/components/types/ProgrammeTypes";
+
+const emit = defineEmits(["updateWorkout"]);
 
 const props = defineProps<{
   workout: Workout;
 }>();
 
+watch(
+  () => props.workout,
+  (newWorkout) => {
+    emit("updateWorkout", newWorkout);
+  },
+  { deep: true }
+);
+
+// Function to add a new set
 const addSet = () => {
-  alert("Add your pr here...");
+  alert("Add your PR here...");
 };
 
+// Function to add a comment
 const addComment = () => {
   alert("Add your comment here...");
 };
