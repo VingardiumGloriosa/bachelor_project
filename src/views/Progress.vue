@@ -19,9 +19,9 @@ import { ref, onMounted } from "vue";
 import LiftCard from "@/components/progress/LiftCard.vue";
 import HistoryList from "@/components/progress/HistoryList.vue";
 import { supabase } from "@/supabase/supabase";
+import { type Exercise } from "@/components/types/ProgrammeTypes";
 
-const exercises = ref<any[]>([]);
-const selectedExercise = ref<any>(null);
+const exercises = ref<Exercise[]>([]);
 
 onMounted(async () => {
   try {

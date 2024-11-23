@@ -28,6 +28,8 @@ import Title from "@/components/shared/Title.vue";
 import {
   type Programme,
   type Workout,
+  type Exercise,
+  type Set,
 } from "@/components/types/ProgrammeTypes";
 
 const route = useRoute();
@@ -36,7 +38,7 @@ const userStore = useUserStore();
 
 const programme = ref<Programme | null>(null);
 const programmeTitle = ref<string>("");
-const workoutInputs = ref<Record<string, any>>({});
+const workoutInputs = ref<Record<string, Workout>>({});
 
 onMounted(async () => {
   const programmeId = route.params.id as string;
@@ -49,11 +51,15 @@ const fetchProgramme = async (programmeId: string) => {
   programme.value = programmeData;
 
   programmeData.workouts.forEach((workout: Workout) => {
-    workoutInputs.value[workout.workout_id] = [];
+    workoutInputs.value[workout.workout_id] = {
+      workout_id: workout.workout_id,
+      name: workout.name,
+      workout_exercises: [],
+    };
   });
 };
 
-const updateWorkout = (workoutId: string, updatedData: any) => {
+const updateWorkout = (workoutId: string, updatedData: Workout) => {
   workoutInputs.value[workoutId] = updatedData;
 };
 
@@ -61,14 +67,14 @@ const finishProgramme = () => {
   const workouts = Object.values(workoutInputs.value);
   const errors: string[] = [];
 
-  workouts.forEach((workoutDetail: any) => {
+  workouts.forEach((workoutDetail: Workout) => {
     if (!Array.isArray(workoutDetail.workout_exercises)) {
       errors.push(`Workout "${workoutDetail.name}" is missing exercises.`);
       return;
     }
 
-    workoutDetail.workout_exercises.forEach((exercise: any) => {
-      exercise.sets.forEach((set: any) => {
+    workoutDetail.workout_exercises.forEach((exercise: Exercise) => {
+      exercise.sets.forEach((set: Set) => {
         if (set.success === undefined) {
           set.success = false;
         }

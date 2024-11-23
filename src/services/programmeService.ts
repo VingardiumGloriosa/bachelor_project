@@ -2,6 +2,7 @@ import { supabase } from "@/supabase/supabase";
 import {
   type Programme,
   type Workout,
+  type Exercise,
 } from "@/components/types/ProgrammeTypes";
 
 export const fetchUserProgrammes = async (
@@ -25,7 +26,7 @@ export const fetchUserProgrammes = async (
 
 export const fetchProgrammeDetails = async (
   programmeId: string
-): Promise<any> => {
+): Promise<Programme> => {
   try {
     const { data, error } = await supabase.rpc("get_programme_details", {
       programme: programmeId,
@@ -77,7 +78,7 @@ export const submitProgrammeService = async (
   }
 };
 
-export const fetchExercisesService = async (): Promise<any> => {
+export const fetchExercisesService = async (): Promise<Exercise> => {
   try {
     const { data, error } = await supabase.rpc("fetch_exercises");
 
