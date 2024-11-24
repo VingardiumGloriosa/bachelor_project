@@ -1,15 +1,6 @@
 import { supabase } from "@/supabase/supabase";
+import { type User } from "@/components/types/UserTypes";
 
-export interface User {
-  id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-}
-
-/**
- * Fetch the currently authenticated user.
- */
 export const fetchCurrentUser = async (): Promise<User | null> => {
   const { data, error } = await supabase.auth.getUser();
 

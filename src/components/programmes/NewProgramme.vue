@@ -106,7 +106,7 @@ import { ref, reactive, onMounted } from "vue";
 import { type Programme } from "@/components/types/ProgrammeTypes";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import { useUserStore } from "@/stores/UserStore";
-import router from "@/router";
+import { useRouter } from "vue-router";
 import { useToastStore, ToastType } from "@/stores/ToastStore";
 
 /*
@@ -120,6 +120,7 @@ Styling
 const programmeStore = useProgrammeStore();
 const userStore = useUserStore();
 const toastStore = useToastStore();
+const router = useRouter();
 
 onMounted(async () => {
   programmeStore.fetchExercises();
@@ -211,7 +212,7 @@ const submitProgrammeHandler = async () => {
       userStore.user?.id as string
     );
     toastStore.toast("Programme submitted successfully!", ToastType.SUCCESS);
-    router.push({ name: "home" });
+    router.push("/home");
   } catch (err) {
     console.error("Unexpected error:", err);
     toastStore.toast("Unexpected error occurred.", ToastType.ERROR);

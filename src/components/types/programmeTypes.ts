@@ -22,3 +22,12 @@ export interface Set {
   is_max: boolean;
   success: boolean;
 }
+
+export interface PR {
+  pr_id: string;
+  exercise_id: string;
+  reps: number;
+  weight: number;
+  user_id: string;
+  achieved_on: Date;
+}

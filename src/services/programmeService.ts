@@ -3,6 +3,7 @@ import {
   type Programme,
   type Workout,
   type Exercise,
+  type PR,
 } from "@/components/types/ProgrammeTypes";
 
 export const fetchUserProgrammes = async (
@@ -93,9 +94,6 @@ export const fetchExercisesService = async (): Promise<Exercise> => {
   }
 };
 
-/*
-TO ADD TOASTS
-*/
 export const submitSetService = async (
   workouts: Workout[],
   userId: string
@@ -142,5 +140,29 @@ export const submitSetService = async (
   } catch (error) {
     console.error("Error in submitSetService:", error);
     return { status: "Error" };
+  }
+};
+
+export const fetchPersonalRecordService = async (
+  userId: string,
+  exerciseId: string,
+  repScheme: string
+): Promise<PR> => {
+  try {
+    const { data, error } = await supabase.rpc("fetch_specific_pr", {
+      user_uuid: userId,
+      ex_id: exerciseId,
+      rep_scheme_input: repScheme,
+    });
+
+    if (error) {
+      console.error("Error fetching personal record:", error);
+      throw new Error(error.message);
+    }
+
+    return data;
+  } catch (err) {
+    console.error("Error in fetchPersonalRecordService:", err);
+    throw err;
   }
 };

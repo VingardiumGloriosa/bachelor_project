@@ -6,6 +6,7 @@ import {
   submitProgrammeService,
   fetchExercisesService,
   submitSetService,
+  fetchPersonalRecordService,
 } from "@/services/ProgrammeService";
 import {
   type Programme,
@@ -122,6 +123,30 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  const fetchPersonalRecords = async (
+    userId: string,
+    exerciseId: string,
+    repScheme: string
+  ) => {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const data = await fetchPersonalRecordService(
+        userId,
+        exerciseId,
+        repScheme
+      );
+      return data;
+    } catch (err) {
+      error.value = (err as Error).message;
+      console.error("Error fetching personal records in store:", error.value);
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     programmes,
     isLoading,
@@ -135,5 +160,6 @@ export const useProgrammeStore = defineStore("programme", () => {
     fetchExercises,
     exercises,
     submitSet,
+    fetchPersonalRecords,
   };
 });
