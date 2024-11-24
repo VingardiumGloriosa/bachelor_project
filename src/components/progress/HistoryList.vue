@@ -9,13 +9,15 @@
       @click="setFilter(option)"
       class="chip"
     >
-      {{ option }}
+      {{ option }} Reps
     </v-chip>
   </div>
 
   <v-container class="lift-card">
-    <div v-if="uniqueRepSchemes.includes(activeFilter)">
-      <h3 class="table-title">Snatch - {{ activeFilter }}</h3>
+    <div v-if="uniqueRepSchemes.includes(parseInt(activeFilter))">
+      <h3 class="table-title">
+        {{ props.selectedExercise?.name }} - {{ activeFilter }}RM
+      </h3>
       <v-table>
         <thead>
           <tr>
@@ -24,10 +26,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(record, index) in filteredRecords(activeFilter)"
-            :key="index"
-          >
+          <tr v-for="(record, index) in filteredRecords" :key="index">
             <td>{{ record.date }}</td>
             <td>{{ record.weight }}</td>
           </tr>
@@ -38,28 +37,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, defineProps, watch } from "vue";
 import Title from "../shared/Title.vue";
+import { useProgrammeStore } from "@/stores/ProgrammeStore";
+import { useUserStore } from "@/stores/UserStore";
+import { type Exercise } from "../types/ProgrammeTypes";
 
-const snatchRecords = ref([
-  { reps: "1RM", weight: 120, date: "2023-11-01" },
-  { reps: "2RM", weight: 115, date: "2023-10-15" },
-  { reps: "3RM", weight: 110, date: "2023-09-30" },
-  { reps: "5RM", weight: 100, date: "2023-08-20" },
-]);
+const userStore = useUserStore();
+const programmeStore = useProgrammeStore();
 
-const activeFilter = ref("1RM");
+const props = defineProps<{
+  selectedExercise: Exercise | null;
+}>();
+
+const history = ref([]);
+
+watch(
+  () => props.selectedExercise,
+  async (newExercise) => {
+    if (newExercise) {
+      try {
+        history.value = await programmeStore.fetchExerciseHistory(
+          userStore.user.id,
+          newExercise.exercise_id
+        );
+      } catch (error) {
+        console.error("Failed to fetch exercise history:", error);
+      }
+    } else {
+      history.value = [];
+    }
+  },
+  { immediate: true }
+);
+
+const activeFilter = ref("");
 
 const setFilter = (filter) => {
   activeFilter.value = filter;
 };
 
-const filteredRecords = (reps) => {
-  return snatchRecords.value.filter((record) => record.reps === reps);
-};
+const filteredRecords = computed(() => {
+  return history.value
+    .filter((record) => record.reps_completed === parseInt(activeFilter.value))
+    .map((record) => ({
+      date: new Date(record.created_at).toLocaleDateString(),
+      weight: record.weight_used,
+    }));
+});
 
 const uniqueRepSchemes = computed(() => {
-  const reps = snatchRecords.value.map((record) => record.reps);
+  const reps = history.value.map((record) => record.reps_completed);
   return [...new Set(reps)];
 });
 </script>

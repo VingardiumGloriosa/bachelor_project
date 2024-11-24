@@ -1,35 +1,64 @@
 <template>
   <v-container class="lift-card">
-    <h3 class="table-title">Snatch</h3>
+    <h3 class="table-title">Personal Records</h3>
     <v-table>
       <thead>
         <tr>
-          <th class="text-left">Reps</th>
+          <th class="text-left">Rep Scheme</th>
           <th class="text-left">Weight (kg)</th>
           <th class="text-left">Date Achieved</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(record, index) in snatchRecords" :key="index">
-          <td>{{ record.reps }}</td>
+        <tr v-for="(record, index) in records" :key="record.pr_id">
+          <td>{{ record.rep_scheme }}</td>
           <td>{{ record.weight }}</td>
-          <td>{{ record.date }}</td>
+          <td>{{ formatDate(record.achieved_on) }}</td>
         </tr>
       </tbody>
     </v-table>
     <v-btn class="pr-add">+ Add PR</v-btn>
   </v-container>
 </template>
-
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch, defineProps } from "vue";
+import { type Exercise } from "../types/ProgrammeTypes";
+import { useProgrammeStore } from "@/stores/ProgrammeStore";
+import { useUserStore } from "@/stores/UserStore";
 
-const snatchRecords = ref([
-  { reps: "1RM", weight: 120, date: "2023-11-01" },
-  { reps: "2RM", weight: 115, date: "2023-10-15" },
-  { reps: "3RM", weight: 110, date: "2023-09-30" },
-  { reps: "5RM", weight: 100, date: "2023-08-20" },
-]);
+const programmeStore = useProgrammeStore();
+const userStore = useUserStore();
+
+const props = defineProps<{
+  selectedExercise: Exercise | null;
+}>();
+
+const records = ref([]);
+
+watch(
+  () => props.selectedExercise,
+  async (newExercise) => {
+    if (newExercise) {
+      try {
+        records.value = await programmeStore.fetchPersonalRecords(
+          userStore.user.id,
+          newExercise.exercise_id
+        );
+      } catch (error) {
+        console.error("Failed to fetch personal records:", error);
+      }
+    } else {
+      records.value = [];
+    }
+  },
+  { immediate: true }
+);
+
+function formatDate(date: string | null): string {
+  if (!date) return "Not Recorded";
+  const d = new Date(date);
+  return d.toLocaleDateString();
+}
 </script>
 
 <style scoped>

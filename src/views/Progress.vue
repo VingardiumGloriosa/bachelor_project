@@ -9,8 +9,8 @@
       item-value="exercise_id"
       v-model="selectedExerciseId"
     />
-    <!--     <LiftCard :selectedExercise="selectedExercise" />
-    <HistoryList :selectedExercise="selectedExercise" /> -->
+    <LiftCard v-if="selectedExercise" :selectedExercise="selectedExercise" />
+    <HistoryList v-if="selectedExercise" :selectedExercise="selectedExercise" />
   </div>
 </template>
 

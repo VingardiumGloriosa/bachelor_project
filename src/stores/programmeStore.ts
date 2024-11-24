@@ -8,6 +8,7 @@ import {
   submitSetService,
   fetchPersonalRecordService,
   fetchPersonalRecordsService,
+  fetchExerciseHistoryService,
 } from "@/services/ProgrammeService";
 import {
   type Programme,
@@ -164,6 +165,21 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  const fetchExerciseHistory = async (userId: string, exerciseId: string) => {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const data = await fetchExerciseHistoryService(userId, exerciseId);
+      return data;
+    } catch (err) {
+      error.value = (err as Error).message;
+      console.error("Error fetching exercise history in store:", error.value);
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  };
   return {
     programmes,
     isLoading,
@@ -179,5 +195,6 @@ export const useProgrammeStore = defineStore("programme", () => {
     submitSet,
     fetchPersonalRecord,
     fetchPersonalRecords,
+    fetchExerciseHistory,
   };
 });
