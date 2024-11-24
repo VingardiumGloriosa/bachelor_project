@@ -120,6 +120,28 @@ export const fetchPersonalRecordService = async (
   }
 };
 
+export const fetchPersonalRecordsService = async (
+  userId: string,
+  exerciseId: string
+): Promise<PR> => {
+  try {
+    const { data, error } = await supabase.rpc("fetch_exercise_pr", {
+      user_uuid: userId,
+      ex_id: exerciseId,
+    });
+
+    if (error) {
+      console.error("Error fetching personal record:", error);
+      throw new Error(error.message);
+    }
+
+    return data;
+  } catch (err) {
+    console.error("Error in fetchPersonalRecordService:", err);
+    throw err;
+  }
+};
+
 const postNewPersonalRecord = async (
   userId: string,
   exerciseId: string,
