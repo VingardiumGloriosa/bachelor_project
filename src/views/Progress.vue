@@ -11,6 +11,7 @@
     />
     <LiftCard v-if="selectedExercise" :selectedExercise="selectedExercise" />
     <HistoryList v-if="selectedExercise" :selectedExercise="selectedExercise" />
+    <ProgressGraph />
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import LiftCard from "@/components/progress/LiftCard.vue";
 import HistoryList from "@/components/progress/HistoryList.vue";
 import { supabase } from "@/supabase/supabase";
 import { type Exercise } from "@/components/types/ProgrammeTypes";
+import ProgressGraph from "@/components/progress/ProgressGraph.vue";
 
 const exercises = ref<Exercise[]>([]);
 const selectedExerciseId = ref<string | null>(null);
