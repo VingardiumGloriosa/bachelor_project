@@ -8,7 +8,7 @@
       dense
       class="mb-4"
     />
-    <v-select
+    <v-autocomplete
       label="Programme Type"
       v-model="programme.type"
       :items="['personal', 'official']"
@@ -33,7 +33,7 @@
         :key="exerciseIndex"
         class="mb-4"
       >
-        <v-select
+        <v-autocomplete
           label="Exercise"
           v-model="exercise.exercise_id"
           :items="programmeStore.exercises"

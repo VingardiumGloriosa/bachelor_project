@@ -6,13 +6,19 @@ export interface Programme {
 export interface Workout {
   workout_id: string;
   name: string;
-  workout_exercises: Array<Exercise>;
+  workout_exercises: Array<WorkoutExercise>;
+}
+
+export interface WorkoutExercise {
+  workout_exercise_id: string;
+  exercise_id: string;
+  exercise_order: number;
+  sets: Array<Set>;
 }
 
 export interface Exercise {
   exercise_id: string;
   name: string;
-  sets: Array<Set>;
 }
 
 export interface Set {
