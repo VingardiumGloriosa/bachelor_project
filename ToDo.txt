@@ -1,0 +1,11 @@
+fix signup
+check comments for more
+setup guards
+setup RLS
+setup admin / coach view and team wod creation
+setup edit profile
+make create wod prettier
+fix graph
+setup goal creation
+setup goals
+homehighlight fix

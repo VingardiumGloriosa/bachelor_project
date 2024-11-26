@@ -14,8 +14,8 @@
       />
       <v-btn
         class="btn-primary"
-        :loading="loading"
-        :disabled="loading"
+        :loading="auth.loading"
+        :disabled="auth.loading"
         type="submit"
       >
         Continue
@@ -28,36 +28,32 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { supabase } from "@/supabase/supabase";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/AuthStore";
 import ArrowBack from "../shared/ArrowBack.vue";
 
 const email = ref("");
-const loading = ref(false);
 const router = useRouter();
+const auth = useAuthStore();
 
 const handleLogin = async () => {
   try {
-    loading.value = true;
-    const { error } = await supabase.auth.signInWithOtp({ email: email.value });
-    if (error) throw error;
-
+    await auth.signInWithMagicLink(email.value);
     alert("Check your email for the magic link to log in!");
   } catch (error) {
-    console.error("Error sending magic link:", error.message);
-  } finally {
-    loading.value = false;
+    console.error("Error during sign-in:", error.message);
   }
 };
 
-function close() {
+const close = () => {
   router.push("/");
-}
+};
 
 const signup = () => {
   router.push("/signup");
 };
 </script>
+
 <style scoped>
 .general {
   display: flex;
