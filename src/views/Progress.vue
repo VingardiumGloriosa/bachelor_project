@@ -11,7 +11,6 @@
     />
     <LiftCard v-if="selectedExercise" :selectedExercise="selectedExercise" />
     <HistoryList v-if="selectedExercise" :selectedExercise="selectedExercise" />
-    <ProgressGraph />
   </div>
 </template>
 
@@ -19,35 +18,49 @@
 import { ref, watch, onMounted } from "vue";
 import LiftCard from "@/components/progress/LiftCard.vue";
 import HistoryList from "@/components/progress/HistoryList.vue";
-import { supabase } from "@/supabase/supabase";
-import { type Exercise } from "@/components/types/ProgrammeTypes";
 import ProgressGraph from "@/components/progress/ProgressGraph.vue";
+import { supabase } from "@/supabase/supabase";
+import { useProgrammeStore } from "@/stores/ProgrammeStore";
+import { useUserStore } from "@/stores/UserStore";
+import { type Exercise } from "@/components/types/ProgrammeTypes";
+
+const programmeStore = useProgrammeStore();
+const userStore = useUserStore();
 
 const exercises = ref<Exercise[]>([]);
 const selectedExerciseId = ref<string | null>(null);
 const selectedExercise = ref<Exercise | null>(null);
+const personalRecords = ref([]); // Personal Records for the graph
 
+// Fetch Exercises
+onMounted(async () => {
+  try {
+    await programmeStore.fetchExercises();
+    exercises.value = programmeStore.exercises;
+  } catch (err) {
+    console.error("Error fetching exercises:", err);
+  }
+});
+
+// Watch the Selected Exercise and Fetch PRs
 watch(selectedExerciseId, async (newExerciseId) => {
   if (newExerciseId) {
     const exercise = exercises.value.find(
       (ex) => ex.exercise_id === newExerciseId
     );
     selectedExercise.value = exercise || null;
-  }
-});
 
-onMounted(async () => {
-  try {
-    const { data, error } = await supabase.rpc("fetch_exercises");
-    if (error) {
-      console.error("Error fetching exercises:", error.message);
-    } else {
-      exercises.value = data || [];
+    // Fetch Personal Records
+    if (selectedExercise.value) {
+      try {
+        personalRecords.value = await programmeStore.fetchPersonalRecords(
+          selectedExercise.value.exercise_id,
+          userStore.user.id
+        );
+      } catch (err) {
+        console.error("Error fetching PRs:", err);
+      }
     }
-  } catch (err) {
-    console.error("Unexpected error:", err);
   }
 });
 </script>
-
-<style scoped></style>

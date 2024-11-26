@@ -31,7 +31,7 @@ export const fetchProgrammeDetails = async (
   programmeId: string
 ): Promise<Programme> => {
   try {
-    const { data, error } = await supabase.rpc("get_programme_details", {
+    const { data, error } = await supabase.rpc("fetch_programme_details", {
       programme: programmeId,
     });
 

@@ -18,6 +18,7 @@
       <h3 class="table-title">
         {{ props.selectedExercise?.name }} - {{ activeFilter }}RM
       </h3>
+
       <v-table>
         <thead>
           <tr>
@@ -34,14 +35,25 @@
       </v-table>
     </div>
   </v-container>
+  <div class="chart-container">
+    <canvas ref="chartCanvas"></canvas>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, watch } from "vue";
+import {
+  ref,
+  computed,
+  defineProps,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
 import Title from "../shared/Title.vue";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import { useUserStore } from "@/stores/UserStore";
 import { type Exercise } from "../types/ProgrammeTypes";
+import Chart from "chart.js/auto";
 
 const userStore = useUserStore();
 const programmeStore = useProgrammeStore();
@@ -72,7 +84,6 @@ watch(
 );
 
 const activeFilter = ref("");
-
 const setFilter = (filter) => {
   activeFilter.value = filter;
 };
@@ -89,6 +100,72 @@ const filteredRecords = computed(() => {
 const uniqueRepSchemes = computed(() => {
   const reps = history.value.map((record) => record.reps_completed);
   return [...new Set(reps)];
+});
+
+const chartCanvas = ref<HTMLCanvasElement | null>(null);
+let chartInstance = null;
+
+watch(filteredRecords, (newRecords) => {
+  if (chartInstance) {
+    chartInstance.data.labels = newRecords.map((record) => record.date);
+    chartInstance.data.datasets[0].data = newRecords.map(
+      (record) => record.weight
+    );
+    chartInstance.update();
+  }
+});
+
+onMounted(() => {
+  if (chartCanvas.value) {
+    chartInstance = new Chart(chartCanvas.value, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "Weight (kg)",
+            data: [],
+            borderColor: "#0561e2",
+            tension: 0.1,
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.dataset.label}: ${context.raw} kg`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Date",
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Weight (kg)",
+            },
+          },
+        },
+      },
+    });
+  }
+});
+
+onBeforeUnmount(() => {
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
 });
 </script>
 
@@ -108,6 +185,15 @@ const uniqueRepSchemes = computed(() => {
   background-color: var(--light-grey);
   border-radius: 16px;
   padding-bottom: 1.5em;
+}
+
+.chart-container {
+  margin-top: 16px;
+}
+
+canvas {
+  width: 100%;
+  height: 400px;
 }
 
 .v-table th,
