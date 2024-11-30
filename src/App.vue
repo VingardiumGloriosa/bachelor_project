@@ -1,13 +1,31 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { supabase } from "@/supabase/supabase";
 import { useRouter } from "vue-router";
-import NavBar from "@/components/shared/NavBar.vue";
+import { supabase } from "@/supabase/supabase";
 import TopBar from "@/components/shared/TopBar.vue";
-import { VSonner } from "vuetify-sonner";
+import NavBar from "./components/shared/CoachNavBar.vue";
+
+const isSignedIn = ref(false);
+const userRole = ref<string | null>(null);
 
 const router = useRouter();
-const isSignedIn = ref(false);
+
+const fetchUserRole = async (userId: string) => {
+  const { data, error } = await supabase.rpc("fetch_user_role", {
+    user_uuid: userId,
+  });
+
+  if (error) {
+    console.error("Error fetching user roles:", error.message);
+    return null;
+  }
+
+  if (data && data.length > 0) {
+    return data[0].role_name;
+  }
+
+  return null;
+};
 
 onMounted(async () => {
   const {
@@ -15,26 +33,35 @@ onMounted(async () => {
     error,
   } = await supabase.auth.getUser();
 
-  const currentRoute = router.currentRoute.value.name;
-
-  if (user && currentRoute !== "home") {
+  if (user) {
     isSignedIn.value = true;
-    router.push({ name: "home" });
-  } else if (!user && currentRoute !== "landing") {
+    const role = await fetchUserRole(user.id);
+    userRole.value = role;
+
+    if (role === "Athlete") {
+      router.push({ name: "home-athlete" });
+    } else if (role === "Coach") {
+      router.push({ name: "home-coach" });
+    }
+  } else {
     router.push({ name: "landing" });
   }
 
-  supabase.auth.onAuthStateChange((event, session) => {
+  supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === "SIGNED_IN" && session) {
       isSignedIn.value = true;
-      if (router.currentRoute.value.name !== "home") {
-        router.push({ name: "home" });
+      const role = await fetchUserRole(session.user.id);
+      userRole.value = role;
+
+      if (role === "Athlete") {
+        router.push({ name: "home-athlete" });
+      } else if (role === "Coach") {
+        router.push({ name: "home-coach" });
       }
     } else if (event === "SIGNED_OUT") {
       isSignedIn.value = false;
-      if (router.currentRoute.value.name !== "landing") {
-        router.push({ name: "landing" });
-      }
+      userRole.value = null;
+      router.push({ name: "landing" });
     }
   });
 });
@@ -44,11 +71,18 @@ onMounted(async () => {
   <div id="app-wrapper">
     <div v-if="isSignedIn">
       <TopBar />
-      <NavBar />
+      <div v-if="userRole === 'Athlete'">
+        <NavBar />
+      </div>
+      <div v-else-if="userRole === 'Coach'">
+        <NavBar />
+      </div>
+      <div v-else>
+        <p>Loading...</p>
+      </div>
     </div>
     <div id="main-content">
       <VSonner position="top-right" />
-
       <router-view />
     </div>
   </div>

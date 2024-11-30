@@ -3,9 +3,6 @@ check comments for more
 setup  coach view and team wod creation
 - ONLY THAT
 
-setup edit profile
-- make team non editable
-
 make create wod prettier
 - low priority
 
@@ -26,3 +23,9 @@ as athlete in programme
 stores + services -> ensure proper setup
 
 make it all into a pwa
+
+navbar should show which view youre on.
+
+proper toasts
+
+remove alerts, use toasts

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/Home.vue";
+import HomeAthlete from "../views/HomeAthlete.vue";
+import HomeCoach from "../views/HomeCoach.vue";
 import Profile from "../views/Profile.vue";
 import Calendar from "../views/Calendar.vue";
 import Progress from "../views/Progress.vue";
@@ -28,10 +29,16 @@ const routes = [
     component: SignInPage,
   },
   {
-    path: "/home",
-    name: "home",
-    component: HomeView,
-    meta: { requiresAuth: true },
+    path: "/home-athlete",
+    name: "home-athlete",
+    component: HomeAthlete,
+    meta: { requiresAuth: true, role: "Athlete" },
+  },
+  {
+    path: "/home-coach",
+    name: "home-coach",
+    component: HomeCoach,
+    meta: { requiresAuth: true, role: "Coach" },
   },
   {
     path: "/profile",
@@ -88,11 +95,36 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta.requiresAuth && !user) {
     next({ name: "signin" });
-  } else {
-    next();
+    return;
   }
 
+  if (to.meta.role && user) {
+    const userRole = await fetchUserRole(user.id);
+
+    if (userRole !== to.meta.role) {
+      if (userRole === "Athlete") {
+        return next({ name: "home-athlete" });
+      } else if (userRole === "Coach") {
+        return next({ name: "home-coach" });
+      }
+    }
+  }
+
+  next();
   isValidatingSession = false;
 });
+
+async function fetchUserRole(userId: string) {
+  const { data, error } = await supabase.rpc("fetch_user_role", {
+    user_uuid: userId,
+  });
+
+  if (error) {
+    console.error("Error fetching user roles:", error.message);
+    return null;
+  }
+
+  return data?.[0]?.role_name || null;
+}
 
 export default router;

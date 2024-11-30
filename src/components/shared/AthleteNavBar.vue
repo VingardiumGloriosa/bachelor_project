@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <ul class="navbar-list">
-      <router-link to="/home">
+      <router-link to="/home-athlete ">
         <img src="@/assets/home.svg" alt="Logo" />
       </router-link>
       <router-link to="/progress">
