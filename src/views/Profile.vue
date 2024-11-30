@@ -23,16 +23,7 @@
 
       <div class="bottom-left">
         <div class="team-name">
-          <span v-if="!isEditing" class="teamname">
-            {{ userStore.user.team?.name || "No Team Assigned" }}
-          </span>
-          <input
-            v-if="isEditing"
-            v-model="userStore.user.team"
-            class="editable-input"
-            type="text"
-            placeholder="Team"
-          />
+          {{ userStore.user.team?.name || "No Team Assigned" }}
         </div>
 
         <div class="email">

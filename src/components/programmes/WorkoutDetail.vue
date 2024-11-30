@@ -8,6 +8,10 @@
     >
       <v-table>
         <thead>
+          {{
+            workoutExercise.exercise
+          }}
+
           <tr>
             <th class="text-left">Reps</th>
             <th class="text-left">%</th>
@@ -52,6 +56,8 @@ const emit = defineEmits(["updateWorkout"]);
 const props = defineProps<{
   workout: Workout;
 }>();
+
+console.log(props.workout);
 
 watch(
   () => props.workout,

@@ -11,6 +11,7 @@ export interface Workout {
 
 export interface WorkoutExercise {
   workout_exercise_id: string;
+  exercise: string;
   exercise_id: string;
   exercise_order: number;
   sets: Array<Set>;
@@ -27,6 +28,7 @@ export interface Set {
   weight: number;
   is_max: boolean;
   success: boolean;
+  percentage: number;
 }
 
 export interface PR {

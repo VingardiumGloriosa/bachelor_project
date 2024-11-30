@@ -1,6 +1,4 @@
 check comments for more
-setup RLS
-- HIGH priority
 
 setup  coach view and team wod creation
 - ONLY THAT
