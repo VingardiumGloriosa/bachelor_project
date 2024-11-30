@@ -57,9 +57,7 @@ export class AuthService {
 
   static async handleAuthStateChange() {
     supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth event:", event);
       if (event === "SIGNED_IN" && session?.user) {
-        console.log("User signed in:", session.user);
         const { data: user, error } = await supabase
           .from("users")
           .select("*")
@@ -67,7 +65,6 @@ export class AuthService {
           .single();
 
         if (error || !user) {
-          console.log("User not found, creating new user...");
           const storedUserDetails = JSON.parse(
             sessionStorage.getItem("userDetails") || "{}"
           );
@@ -78,12 +75,10 @@ export class AuthService {
               lastName: storedUserDetails.lastName,
               roleId: storedUserDetails.roleId,
             });
-            console.log("User created and role assigned.");
           } else {
             console.error("No user details found in sessionStorage.");
           }
         } else {
-          console.log("User already exists in the database.");
         }
       }
     });

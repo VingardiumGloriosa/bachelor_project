@@ -15,8 +15,8 @@ export const fetchUserProgrammes = async (
     const { data, error } = await supabase.rpc("fetch_user_programmes", {
       user_uuid: userId,
     });
-
     if (error) {
+      console.error("Supabase RPC Error:", error.message);
       throw new Error(error.message);
     }
 

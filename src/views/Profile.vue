@@ -82,7 +82,6 @@ onMounted(async () => {
       router.push({ name: "signin" });
     } else {
       await getProfile(userStore.user.id);
-      console.log("User:", userStore.user);
     }
   } catch (error) {
     console.error("Error fetching user:", error);
