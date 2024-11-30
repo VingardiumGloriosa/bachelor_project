@@ -1,7 +1,7 @@
 <template>
   <arrow-back @click="close" class="backbtn" />
   <v-container class="general">
-    <h1>Sign Up</h1>
+    <h1>Sign-up</h1>
     <v-form @submit.prevent="handleSignup">
       <v-text-field
         v-model="email"
@@ -11,107 +11,76 @@
         variant="outlined"
         rounded="lg"
       />
-      <v-text-field
-        v-model="firstName"
-        label="First Name"
-        type="text"
-        required
-        variant="outlined"
-        rounded="lg"
-      />
-      <v-text-field
-        v-model="lastName"
-        label="Last Name"
-        type="text"
-        required
-        variant="outlined"
-        rounded="lg"
-      />
-      <v-select
-        class="style-chooser"
-        v-model="roleId"
-        :items="roles"
-        label="Role"
-        required
-        variant="outlined"
-        rounded="lg"
-        item-title="role_name"
-        item-value="role_id"
-      />
       <v-btn
         class="btn-primary"
         :loading="loading"
         :disabled="loading"
         type="submit"
-        rounded
       >
         Continue
       </v-btn>
       <p class="text-center">Already have an account?</p>
-      <p class="text-center text-grey" @click="signin">Sign In</p>
+      <p class="text-center text-grey" @click="signin">Log In</p>
     </v-form>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { supabase } from "@/supabase/supabase";
 import { useRouter } from "vue-router";
 import ArrowBack from "../shared/ArrowBack.vue";
+import { useAuthStore } from "@/stores/AuthStore";
 
 const email = ref("");
-const firstName = ref("");
-const lastName = ref("");
-const roleId = ref(null);
-const roles = ref([]);
 const loading = ref(false);
 const router = useRouter();
 
-//TO FIX
-const fetchRoles = async () => {
+const auth = useAuthStore();
+
+const handleSignup = async () => {
   try {
-    const { data, error } = await supabase.from("roles").select("*");
-    if (error) throw error;
-    roles.value = data;
+    await auth.signInWithMagicLink(email.value);
+    alert("Check your email for the magic link to log in!");
   } catch (error) {
-    console.error("Error fetching roles:", error.message);
+    console.error("Error during sign-in:", error.message);
   }
 };
 
 onMounted(() => {
-  fetchRoles();
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === "SIGNED_IN" && session) {
+      const userDetails = session.user;
+      await handleUserAfterSignup(userDetails);
+    }
+  });
 });
 
-const handleSignup = async () => {
+const handleUserAfterSignup = async (userDetails) => {
   try {
-    loading.value = true;
-    const { error } = await supabase.auth.signInWithOtp({ email: email.value });
+    const { error } = await supabase.from("users").upsert({
+      id: userDetails.id,
+      email: userDetails.email,
+      first_name: "",
+      last_name: "",
+    });
+
     if (error) throw error;
 
-    sessionStorage.setItem(
-      "userDetails",
-      JSON.stringify({
-        firstName: firstName.value,
-        lastName: lastName.value,
-        roleId: roleId.value,
-      })
-    );
-
-    alert("Check your email for a magic link to complete sign-up!");
+    alert("User details saved successfully!");
+    router.push("/dashboard");
   } catch (error) {
-    console.error("Error sending magic link:", error.message);
-  } finally {
-    loading.value = false;
+    console.error("Error saving user details:", error.message);
   }
+};
+
+const signin = () => {
+  router.push("/signin");
 };
 
 function close() {
   router.push("/");
 }
-
-const signin = () => {
-  router.push("/signin");
-};
 </script>
 
 <style scoped>

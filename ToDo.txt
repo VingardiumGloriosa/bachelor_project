@@ -1,4 +1,8 @@
 fix signup
+-- remove option to select role
+-- maybe an automatic trigger upton succesfful signup
+-- admin to allocate teams + roles from dashboard for now
+
 check comments for more
 setup guards
 setup RLS
