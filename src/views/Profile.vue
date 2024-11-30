@@ -58,6 +58,7 @@
         <button @click="cancelEdit" :disabled="loading">Cancel</button>
       </div>
     </v-container>
+    <GoalProgress />
   </div>
 </template>
 
@@ -66,6 +67,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import { supabase } from "@/supabase/supabase";
+import GoalProgress from "@/components/home/GoalProgress.vue";
 
 const router = useRouter();
 const userStore = useUserStore();

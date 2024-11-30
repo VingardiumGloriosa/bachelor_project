@@ -1,13 +1,27 @@
 check comments for more
-setup guards
 setup RLS
-setup admin / coach view and team wod creation
+- HIGH priority
+
+setup  coach view and team wod creation
+- ONLY THAT
+
 setup edit profile
+- make team non editable
+
 make create wod prettier
+- low priority
+
 fix graph
+- ugly atm
+
 setup goal creation
 setup goals
+- frontend + backend dummy data
+
 homehighlight fix
+- should be dynamic
+
 as athlete in programme
-tooltips should show suggestions of "last done"
-input weights should be pre-populted with the appropriate calculation of what weight to take
+-tooltips should show suggestions of "last done"
+-input weights should be pre-populted with the appropriate calculation of what weight to take
+
