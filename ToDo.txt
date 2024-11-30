@@ -1,8 +1,3 @@
-fix signup
--- remove option to select role
--- maybe an automatic trigger upton succesfful signup
--- admin to allocate teams + roles from dashboard for now
-
 check comments for more
 setup guards
 setup RLS
@@ -13,3 +8,6 @@ fix graph
 setup goal creation
 setup goals
 homehighlight fix
+as athlete in programme
+tooltips should show suggestions of "last done"
+input weights should be pre-populted with the appropriate calculation of what weight to take

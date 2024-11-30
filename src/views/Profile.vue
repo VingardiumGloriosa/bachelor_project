@@ -1,28 +1,63 @@
 <template>
   <div class="home-container">
-    <ProfileHighlight :user="userStore.user" />
+    <v-container class="card">
+      <div class="top-left">
+        <span v-if="!isEditing" class="username">
+          {{ userStore.user.first_name }} {{ userStore.user.last_name }}
+        </span>
+        <input
+          v-if="isEditing"
+          v-model="userStore.user.first_name"
+          class="editable-input"
+          type="text"
+          placeholder="First Name"
+        />
+        <input
+          v-if="isEditing"
+          v-model="userStore.user.last_name"
+          class="editable-input"
+          type="text"
+          placeholder="Last Name"
+        />
+      </div>
 
-    <form v-if="!loading" @submit.prevent="updateProfile">
-      <div>
-        <label>Email</label>
-        <input type="text" :value="userStore.user.email" disabled />
+      <div class="bottom-left">
+        <div class="team-name">
+          <span v-if="!isEditing" class="teamname">
+            {{ userStore.user.team?.name || "No Team Assigned" }}
+          </span>
+          <input
+            v-if="isEditing"
+            v-model="userStore.user.team"
+            class="editable-input"
+            type="text"
+            placeholder="Team"
+          />
+        </div>
+
+        <div class="email">
+          <span v-if="!isEditing" class="email">{{
+            userStore.user.email
+          }}</span>
+          <input
+            v-if="isEditing"
+            v-model="userStore.user.email"
+            class="editable-input"
+            type="email"
+            placeholder="Email"
+          />
+        </div>
       </div>
-      <div>
-        <label>First Name</label>
-        <input v-model="userStore.user.first_name" required />
+
+      <div class="top-right" @click="editProfile">
+        <v-icon>mdi-pencil</v-icon>
       </div>
-      <div>
-        <label>Last Name</label>
-        <input v-model="userStore.user.last_name" required />
+
+      <div v-if="isEditing" class="buttons">
+        <button @click="saveProfile" :disabled="loading">Save</button>
+        <button @click="cancelEdit" :disabled="loading">Cancel</button>
       </div>
-      <div>
-        <label>Role</label>
-        <input type="text" :value="userStore.user.userRole" disabled />
-      </div>
-      <button type="submit" :disabled="loading">Update Profile</button>
-      <button @click="signOut" :disabled="loading">Sign Out</button>
-    </form>
-    <p v-else>Loading...</p>
+    </v-container>
   </div>
 </template>
 
@@ -31,11 +66,11 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import { supabase } from "@/supabase/supabase";
-import ProfileHighlight from "@/components/profile/ProfileHighlight.vue";
 
 const router = useRouter();
 const userStore = useUserStore();
 const loading = ref(true);
+const isEditing = ref(false);
 
 onMounted(async () => {
   try {
@@ -44,7 +79,8 @@ onMounted(async () => {
     if (!userStore.user) {
       router.push({ name: "signin" });
     } else {
-      await getProfile(userStore.user);
+      await getProfile(userStore.user.id);
+      console.log("User:", userStore.user);
     }
   } catch (error) {
     console.error("Error fetching user:", error);
@@ -52,26 +88,23 @@ onMounted(async () => {
   }
 });
 
-async function getProfile(user) {
+async function getProfile(userId: string) {
   try {
     loading.value = true;
-    const { data, error } = await supabase
-      .from("users")
-      .select(`first_name, last_name, email, userroles (roles (role_name))`)
-      .eq("id", user.id)
-      .single();
 
-    if (error) throw error;
+    const { data, error } = await supabase.rpc("fetch_user_profile", {
+      user_id: userId,
+    });
 
-    if (data) {
-      user.first_name = data.first_name;
-      user.last_name = data.last_name;
-      user.email = data.email;
-      userRole.value =
-        data.userroles && data.userroles.length > 0
-          ? data.userroles[0]?.roles.role_name
-          : "No Role Assigned";
+    if (error) {
+      throw error;
     }
+
+    userStore.user.first_name = data.first_name;
+    userStore.user.last_name = data.last_name;
+    userStore.user.email = data.email;
+    userStore.user.roles = data.roles;
+    userStore.user.team = data.team;
   } catch (error) {
     console.error("Error fetching profile:", error);
     alert("Failed to load profile.");
@@ -80,23 +113,7 @@ async function getProfile(user) {
   }
 }
 
-async function signOut() {
-  try {
-    loading.value = true;
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    alert("Signed out successfully!");
-    router.push({ name: "signin" });
-  } catch (error) {
-    alert(error.message);
-  } finally {
-    loading.value = false;
-  }
-}
-
-const userRole = ref("");
-
-async function updateProfile() {
+async function saveProfile() {
   try {
     loading.value = true;
 
@@ -105,12 +122,15 @@ async function updateProfile() {
       .update({
         first_name: userStore.user.first_name,
         last_name: userStore.user.last_name,
+        email: userStore.user.email,
+        team: userStore.user.team,
       })
       .eq("id", userStore.user.id);
 
     if (error) throw error;
 
     alert("Profile updated successfully!");
+    isEditing.value = false;
   } catch (error) {
     console.error("Error updating profile:", error);
     alert("Failed to update profile.");
@@ -118,6 +138,94 @@ async function updateProfile() {
     loading.value = false;
   }
 }
+
+function editProfile() {
+  isEditing.value = true;
+}
+
+function cancelEdit() {
+  isEditing.value = false;
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+.card {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  background: var(--primary);
+  background: linear-gradient(
+    90deg,
+    rgba(5, 97, 226, 1) 0%,
+    rgba(150, 151, 152, 1) 100%
+  );
+  border-radius: 16px;
+  margin-top: 5%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top-left {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  color: white;
+}
+
+.username,
+.teamname,
+.email {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.editable-input {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 5px 0;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f7f7f7;
+}
+
+.bottom-left {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  color: white;
+}
+
+.top-right {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+}
+
+.v-icon {
+  font-size: 24px;
+}
+
+.buttons {
+  margin-top: 10px;
+}
+
+.buttons button {
+  padding: 8px 16px;
+  font-size: 14px;
+  margin: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.buttons button:disabled {
+  background-color: #ccc;
+}
+</style>
