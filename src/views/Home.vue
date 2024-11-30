@@ -1,9 +1,9 @@
 <template>
   <div class="home-container">
     <HomeHighlight />
-    <TitleAndMore title="Goal Progress" />
+    <TitleAndMore title="Goal Progress" link="/goal-progress" />
     <GoalProgress />
-    <TitleAndMore title="Programmes" />
+    <TitleAndMore title="Programmes" link="/programmes" />
     <ProgrammeList />
   </div>
 </template>

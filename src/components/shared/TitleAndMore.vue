@@ -1,8 +1,7 @@
-// To do add a reusable link based on where we want to route on the see all
 <template>
   <v-container>
     <h1>{{ title }}</h1>
-    <p class="more">See All</p>
+    <router-link :to="link" class="more">See All</router-link>
   </v-container>
 </template>
 
@@ -11,6 +10,10 @@ import { defineProps } from "vue";
 
 defineProps({
   title: {
+    type: String,
+    required: true,
+  },
+  link: {
     type: String,
     required: true,
   },

@@ -30,9 +30,8 @@ const userStore = useUserStore();
 const exercises = ref<Exercise[]>([]);
 const selectedExerciseId = ref<string | null>(null);
 const selectedExercise = ref<Exercise | null>(null);
-const personalRecords = ref([]); // Personal Records for the graph
+const personalRecords = ref([]);
 
-// Fetch Exercises
 onMounted(async () => {
   try {
     await programmeStore.fetchExercises();
@@ -42,7 +41,6 @@ onMounted(async () => {
   }
 });
 
-// Watch the Selected Exercise and Fetch PRs
 watch(selectedExerciseId, async (newExerciseId) => {
   if (newExerciseId) {
     const exercise = exercises.value.find(
@@ -50,7 +48,6 @@ watch(selectedExerciseId, async (newExerciseId) => {
     );
     selectedExercise.value = exercise || null;
 
-    // Fetch Personal Records
     if (selectedExercise.value) {
       try {
         personalRecords.value = await programmeStore.fetchPersonalRecords(

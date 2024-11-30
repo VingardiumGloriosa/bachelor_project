@@ -25,3 +25,6 @@ as athlete in programme
 -tooltips should show suggestions of "last done"
 -input weights should be pre-populted with the appropriate calculation of what weight to take
 
+stores + services -> ensure proper setup
+
+make it all into a pwa

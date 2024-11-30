@@ -61,12 +61,10 @@ watch(
   { deep: true }
 );
 
-// Function to add a new set
 const addSet = () => {
   alert("Add your PR here...");
 };
 
-// Function to add a comment
 const addComment = () => {
   alert("Add your comment here...");
 };

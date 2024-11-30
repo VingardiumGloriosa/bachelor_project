@@ -1,30 +1,24 @@
-// src/services/AuthService.ts
 import { supabase } from "@/supabase/supabase";
 
-// AuthService to handle authentication logic
 export class AuthService {
-  // Sign-in with Magic Link (OTP)
   static async signInWithMagicLink(email: string) {
     const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) throw new Error(error.message);
     return true;
   }
 
-  // Sign-out the user
   static async signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
     return true;
   }
 
-  // Get the current authenticated user
   static async getCurrentUser() {
     const { data: user, error } = await supabase.auth.getUser();
     if (error) throw new Error(error.message);
     return user;
   }
 
-  // Create a new user in the "users" table and assign the role in "userroles"
   static async createUser(userDetails: {
     firstName: string;
     lastName: string;
@@ -32,7 +26,6 @@ export class AuthService {
     roleId: number;
   }) {
     try {
-      // Insert user into the "users" table
       const { data, error } = await supabase
         .from("users")
         .insert([
@@ -42,14 +35,13 @@ export class AuthService {
             last_name: userDetails.lastName,
           },
         ])
-        .single(); // .single ensures we get only one user as response
+        .single();
 
       if (error) throw new Error(error.message);
 
-      // Assign role to user in the "userroles" table
       const { error: roleError } = await supabase.from("userroles").insert([
         {
-          user_id: data.id, // reference to the user id
+          user_id: data.id,
           role_id: userDetails.roleId,
         },
       ]);
@@ -63,22 +55,19 @@ export class AuthService {
     }
   }
 
-  // Listen for auth state changes
   static async handleAuthStateChange() {
     supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth event:", event); // Debugging line to check auth events
+      console.log("Auth event:", event);
       if (event === "SIGNED_IN" && session?.user) {
-        console.log("User signed in:", session.user); // Debugging line to check the user
-        // Check if the user exists in the "users" table
+        console.log("User signed in:", session.user);
         const { data: user, error } = await supabase
           .from("users")
           .select("*")
           .eq("email", session.user.email)
-          .single(); // Check if the user is found by email
+          .single();
 
         if (error || !user) {
-          console.log("User not found, creating new user..."); // Debugging line
-          // If the user does not exist, create them and assign a role
+          console.log("User not found, creating new user...");
           const storedUserDetails = JSON.parse(
             sessionStorage.getItem("userDetails") || "{}"
           );
