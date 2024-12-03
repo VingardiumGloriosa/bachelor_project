@@ -29,3 +29,11 @@ navbar should show which view youre on.
 proper toasts
 
 remove alerts, use toasts
+
+add signout
+
+programme should automatically be personal if athlete and oficial when coach
+
+filters not working - home page chips
+
+routing not the best

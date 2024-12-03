@@ -9,6 +9,16 @@
       class="mb-4"
     />
     <v-autocomplete
+      label="Team"
+      v-model="programme.team_id"
+      :items="teams"
+      item-title="team_name"
+      item-value="team_id"
+      placeholder="Select team"
+      dense
+      class="mb-2"
+    />
+    <v-autocomplete
       label="Programme Type"
       v-model="programme.type"
       :items="['personal', 'official']"
@@ -43,7 +53,6 @@
           dense
           class="mb-2"
         />
-
         <v-table>
           <thead>
             <tr>
@@ -83,13 +92,13 @@
             </tr>
           </tbody>
         </v-table>
-        <v-btn small @click="addSet(workoutIndex, exerciseIndex)"
-          >+ Add Set</v-btn
-        >
+        <v-btn small @click="addSet(workoutIndex, exerciseIndex)">
+          + Add Set
+        </v-btn>
       </div>
-      <v-btn small @click="addExercise(workoutIndex)" class="mt-2"
-        >+ Add Exercise</v-btn
-      >
+      <v-btn small @click="addExercise(workoutIndex)" class="mt-2">
+        + Add Exercise
+      </v-btn>
     </div>
     <v-btn small @click="addWorkout" class="mb-4">+ Add Workout</v-btn>
     <v-btn
@@ -101,6 +110,7 @@
     </v-btn>
   </v-container>
 </template>
+
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { type Programme } from "@/components/types/ProgrammeTypes";
@@ -108,22 +118,37 @@ import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "vue-router";
 import { useToastStore, ToastType } from "@/stores/ToastStore";
-
-/*
-TO ADD
-You should not be able to add a programme without a title
-You should not be able to add a workout without a title
-You should not be able to add an exercise without adding reps and sets to it
-Styling
-*/
+import { supabase } from "@/supabase/supabase";
 
 const programmeStore = useProgrammeStore();
 const userStore = useUserStore();
 const toastStore = useToastStore();
 const router = useRouter();
 
+const teams = ref([]); // Corrected to use ref
+
+const fetchTeams = async () => {
+  const { data, error } = await supabase.rpc("fetch_teams");
+
+  if (error) {
+    console.error("Error fetching teams:", error.message);
+    return [];
+  }
+
+  return data; // Ensure to return data to populate teams
+};
+
 onMounted(async () => {
+  const userResponse = await supabase.auth.getUser();
   programmeStore.fetchExercises();
+  const user = userResponse.data;
+
+  if (user) {
+    teams.value = await fetchTeams(); // Corrected to use `.value` for reactive reference
+    console.log(teams.value); // Debug log to confirm the teams fetched
+  } else {
+    console.error("No user is logged in.");
+  }
 });
 
 const programme = reactive<Programme>({
@@ -155,36 +180,36 @@ const validateProgramme = (programme: Programme): string[] => {
         workout.workout_exercises.forEach((exercise, exerciseIndex) => {
           if (!exercise.exercise_id) {
             errors.push(
-              `Exercise ${exerciseIndex + 1} in Workout ${
+              `Exercise ${exerciseIndex + 1} in Workout $(
                 workoutIndex + 1
-              } must be selected.`
+              ) must be selected.`
             );
           }
 
           if (exercise.sets.length === 0) {
             errors.push(
-              `Exercise ${exerciseIndex + 1} in Workout ${
+              `Exercise ${exerciseIndex + 1} in Workout $(
                 workoutIndex + 1
-              } must have at least one set.`
+              ) must have at least one set.`
             );
           } else {
             exercise.sets.forEach((set, setIndex) => {
               if (set.reps === null || set.reps <= 0) {
                 errors.push(
-                  `Set ${setIndex + 1} in Exercise ${
+                  `Set ${setIndex + 1} in Exercise $(
                     exerciseIndex + 1
-                  } in Workout ${
+                  ) in Workout $(
                     workoutIndex + 1
-                  } must have a valid number of reps.`
+                  ) must have a valid number of reps.`
                 );
               }
               if (set.percentage === null || set.percentage <= 0) {
                 errors.push(
-                  `Set ${setIndex + 1} in Exercise ${
+                  `Set ${setIndex + 1} in Exercise $(
                     exerciseIndex + 1
-                  } in Workout ${
+                  ) in Workout $(
                     workoutIndex + 1
-                  } must have a valid percentage.`
+                  ) must have a valid percentage.`
                 );
               }
             });
@@ -262,6 +287,7 @@ const removeExercise = (workoutIndex: number, exerciseIndex: number) => {
   });
 };
 </script>
+
 <style scoped>
 .table-title {
   margin-bottom: 16px;

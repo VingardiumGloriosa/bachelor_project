@@ -52,6 +52,7 @@ export const submitProgrammeService = async (
   programme_name: string,
   programme_type: string,
   user_uuid: string,
+  team_uuid: string,
   workouts: []
 ): Promise<{ status: string; programme_id?: string } | null> => {
   try {
@@ -59,6 +60,7 @@ export const submitProgrammeService = async (
       programme_name,
       programme_type,
       user_uuid,
+      team_uuid,
       workouts: workouts.map((workout) => ({
         ...workout,
         workout_exercises: workout.workout_exercises.map((exercise) => ({

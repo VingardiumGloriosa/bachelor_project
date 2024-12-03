@@ -73,6 +73,7 @@ export const useProgrammeStore = defineStore("programme", () => {
         programme.name,
         programme.type,
         userId,
+        programme.team_id,
         programme.workouts
       );
 

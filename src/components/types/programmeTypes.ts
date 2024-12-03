@@ -2,6 +2,7 @@ export interface Programme {
   name: string;
   type: string;
   workouts: Workout[];
+  team_id: string;
 }
 export interface Workout {
   workout_id: string;

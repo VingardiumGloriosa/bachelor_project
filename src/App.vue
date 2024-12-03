@@ -3,7 +3,8 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { supabase } from "@/supabase/supabase";
 import TopBar from "@/components/shared/TopBar.vue";
-import NavBar from "./components/shared/CoachNavBar.vue";
+import CoachNavBar from "./components/shared/CoachNavBar.vue";
+import AthleteNavBar from "./components/shared/AthleteNavBar.vue";
 
 const isSignedIn = ref(false);
 const userRole = ref<string | null>(null);
@@ -72,10 +73,10 @@ onMounted(async () => {
     <div v-if="isSignedIn">
       <TopBar />
       <div v-if="userRole === 'Athlete'">
-        <NavBar />
+        <AthleteNavBar />
       </div>
       <div v-else-if="userRole === 'Coach'">
-        <NavBar />
+        <CoachNavBar />
       </div>
       <div v-else>
         <p>Loading...</p>
