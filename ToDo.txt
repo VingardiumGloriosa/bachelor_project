@@ -27,8 +27,6 @@ remove alerts, use toasts
 
 programme should automatically be personal if athlete and oficial when coach
 
-filters not working - home page chips
-
 coach should not say "no team assinged but it should say coach"
 
 refactor my files so that theyre under 150 - 200 liens and reuasble components are in 

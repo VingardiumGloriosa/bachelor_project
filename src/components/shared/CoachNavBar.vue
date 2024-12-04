@@ -69,7 +69,6 @@
   z-index: -1;
 }
 
-/* Hover Effects */
 .nav-link:hover {
   transform: scale(1.1);
 }

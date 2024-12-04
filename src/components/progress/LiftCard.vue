@@ -10,7 +10,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(record, index) in records" :key="record.pr_id">
+        <tr v-for="(record, index) in sortedRecords" :key="record.pr_id">
           <td>{{ record.rep_scheme }}</td>
           <td>{{ record.weight }}</td>
           <td>{{ formatDate(record.achieved_on) }}</td>
@@ -20,8 +20,9 @@
     <v-btn class="pr-add">+ Add PR</v-btn>
   </v-container>
 </template>
+
 <script setup lang="ts">
-import { ref, watch, defineProps } from "vue";
+import { ref, watch, computed, defineProps } from "vue";
 import { type Exercise } from "../types/ProgrammeTypes";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import { useUserStore } from "@/stores/UserStore";
@@ -53,6 +54,10 @@ watch(
   },
   { immediate: true }
 );
+
+const sortedRecords = computed(() => {
+  return [...records.value].sort((a, b) => a.rep_scheme - b.rep_scheme);
+});
 
 function formatDate(date: string | null): string {
   if (!date) return "Not Recorded";

@@ -1,7 +1,6 @@
 <template>
   <v-container class="lift-card" v-if="workout && workout.workout_exercises">
     <h3 class="table-title">{{ workout.name }}</h3>
-    <!-- Missing the lift names !! -->
     <div
       v-for="workoutExercise in workout.workout_exercises"
       :key="workoutExercise.workout_exercise_id"

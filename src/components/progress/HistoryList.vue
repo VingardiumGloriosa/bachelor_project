@@ -13,8 +13,8 @@
     </v-chip>
   </div>
 
-  <v-container class="lift-card">
-    <div v-if="uniqueRepSchemes.includes(parseInt(activeFilter))">
+  <v-container class="lift-card mb-6">
+    <div v-if="filteredRecords.length > 0">
       <h3 class="table-title">
         {{ props.selectedExercise?.name }} - {{ activeFilter }}RM
       </h3>
@@ -33,27 +33,21 @@
           </tr>
         </tbody>
       </v-table>
+      <ChartComponent :records="filteredRecords" />
+    </div>
+    <div v-else>
+      <p class="text-center">No history available.</p>
     </div>
   </v-container>
-  <div class="chart-container">
-    <canvas ref="chartCanvas"></canvas>
-  </div>
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  defineProps,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-} from "vue";
+import { ref, computed, defineProps, watch } from "vue";
 import Title from "../shared/TitleElement.vue";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import { useUserStore } from "@/stores/UserStore";
 import { type Exercise } from "../types/ProgrammeTypes";
-import Chart from "chart.js/auto";
+import ChartComponent from "../programmes/ChartComponent.vue";
 
 const userStore = useUserStore();
 const programmeStore = useProgrammeStore();
@@ -74,7 +68,7 @@ watch(
           newExercise.exercise_id
         );
       } catch (error) {
-        console.error("Failed to fetch exercise history:", error);
+        history.value = [];
       }
     } else {
       history.value = [];
@@ -89,82 +83,36 @@ const setFilter = (filter) => {
 };
 
 const filteredRecords = computed(() => {
-  return history.value
-    .filter((record) => record.reps_completed === parseInt(activeFilter.value))
-    .map((record) => ({
-      date: new Date(record.created_at).toLocaleDateString(),
-      weight: record.weight_used,
-    }));
+  if (history.value && history.value.length > 0) {
+    const filtered = history.value
+      .filter((record) => {
+        return (
+          activeFilter && record.reps_completed === parseInt(activeFilter.value)
+        );
+      })
+      .map((record) => ({
+        date: new Date(record.created_at).toLocaleDateString(),
+        weight: record.weight_used,
+      }));
+    return filtered;
+  } else {
+    return [];
+  }
 });
 
 const uniqueRepSchemes = computed(() => {
-  const reps = history.value.map((record) => record.reps_completed);
-  return [...new Set(reps)];
-});
-
-const chartCanvas = ref<HTMLCanvasElement | null>(null);
-let chartInstance = null;
-
-watch(filteredRecords, (newRecords) => {
-  if (chartInstance) {
-    chartInstance.data.labels = newRecords.map((record) => record.date);
-    chartInstance.data.datasets[0].data = newRecords.map(
-      (record) => record.weight
-    );
-    chartInstance.update();
+  if (history.value && history.value.length > 0) {
+    const reps = history.value.map((record) => record.reps_completed);
+    const uniqueReps = [...new Set(reps)].sort((a, b) => a - b);
+    return uniqueReps;
+  } else {
+    return [];
   }
 });
 
-onMounted(() => {
-  if (chartCanvas.value) {
-    chartInstance = new Chart(chartCanvas.value, {
-      type: "line",
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: "Weight (kg)",
-            data: [],
-            borderColor: "#0561e2",
-            tension: 0.1,
-            fill: false,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            display: false,
-          },
-          tooltip: {
-            callbacks: {
-              label: (context) => `${context.dataset.label}: ${context.raw} kg`,
-            },
-          },
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: "Date",
-            },
-          },
-          y: {
-            title: {
-              display: true,
-              text: "Weight (kg)",
-            },
-          },
-        },
-      },
-    });
-  }
-});
-
-onBeforeUnmount(() => {
-  if (chartInstance) {
-    chartInstance.destroy();
+watch(uniqueRepSchemes, (newRepSchemes) => {
+  if (newRepSchemes.length > 0 && !activeFilter.value) {
+    activeFilter.value = newRepSchemes[0];
   }
 });
 </script>
