@@ -125,7 +125,7 @@ const userStore = useUserStore();
 const toastStore = useToastStore();
 const router = useRouter();
 
-const teams = ref([]); // Corrected to use ref
+const teams = ref([]);
 
 const fetchTeams = async () => {
   const { data, error } = await supabase.rpc("fetch_teams");
@@ -135,7 +135,7 @@ const fetchTeams = async () => {
     return [];
   }
 
-  return data; // Ensure to return data to populate teams
+  return data;
 };
 
 onMounted(async () => {
@@ -144,8 +144,7 @@ onMounted(async () => {
   const user = userResponse.data;
 
   if (user) {
-    teams.value = await fetchTeams(); // Corrected to use `.value` for reactive reference
-    console.log(teams.value); // Debug log to confirm the teams fetched
+    teams.value = await fetchTeams();
   } else {
     console.error("No user is logged in.");
   }

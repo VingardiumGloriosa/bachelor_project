@@ -1,8 +1,3 @@
-check comments for more
-
-setup  coach view and team wod creation
-- ONLY THAT
-
 make create wod prettier
 - low priority
 
@@ -12,6 +7,10 @@ fix graph
 setup goal creation
 setup goals
 - frontend + backend dummy data
+
+setup add PR functionalitz
+
+setup add comments functionalitz
 
 homehighlight fix
 - should be dynamic
@@ -24,16 +23,12 @@ stores + services -> ensure proper setup
 
 make it all into a pwa
 
-navbar should show which view youre on.
-
-proper toasts
-
 remove alerts, use toasts
-
-add signout
 
 programme should automatically be personal if athlete and oficial when coach
 
 filters not working - home page chips
 
-routing not the best
+coach should not say "no team assinged but it should say coach"
+
+refactor my files so that theyre under 150 - 200 liens and reuasble components are in 

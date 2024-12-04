@@ -26,7 +26,22 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const signOut = async () => {
+    try {
+      loading.value = true;
+      await AuthService.signOut(); // Call AuthService signOut
+      user.value = null; // Clear user data
+      sessionStorage.removeItem("userDetails"); // Clear sessionStorage
+      await router.push({ name: "signin" }); // Redirect to sign-in page
+    } catch (err) {
+      error.value = err.message;
+      console.error("Error during sign-out:", err.message);
+    } finally {
+      loading.value = false;
+    }
+  };
+
   AuthService.handleAuthStateChange();
 
-  return { user, loading, error, signInWithMagicLink };
+  return { user, loading, error, signInWithMagicLink, signOut };
 });

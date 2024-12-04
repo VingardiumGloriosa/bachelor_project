@@ -50,6 +50,7 @@
       </div>
     </v-container>
     <GoalProgress />
+    <v-btn class="btn-primary" @click="authStore.signOut()">Sign Out</v-btn>
   </div>
 </template>
 
@@ -58,12 +59,14 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import { supabase } from "@/supabase/supabase";
+import { useAuthStore } from "@/stores/AuthStore";
 import GoalProgress from "@/components/home/GoalProgress.vue";
 
 const router = useRouter();
 const userStore = useUserStore();
 const loading = ref(true);
 const isEditing = ref(false);
+const authStore = useAuthStore();
 
 onMounted(async () => {
   try {
