@@ -3,19 +3,19 @@
     <div id="filter-chips">
       <v-chip
         v-for="option in filterOptions"
-        :key="option"
-        :class="{ active: activeFilter === option }"
-        @click="setFilter(option)"
+        :key="option.value"
+        :class="{ active: activeFilter === option.value }"
+        @click="setFilter(option.value)"
         class="chip"
       >
-        {{ option }}
+        {{ option.label }}
       </v-chip>
     </div>
 
     <div id="programs">
       <ProgrammeCard
         v-for="program in filteredPrograms"
-        :key="program.id"
+        :key="program.programme_id"
         :date="program.name"
         class="mb-4"
         @click="goToProgrammeDetail(program.programme_id, program.name)"
@@ -23,6 +23,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import ProgrammeCard from "./ProgrammeCard.vue";
 import { ref, computed, onMounted } from "vue";
@@ -31,16 +32,6 @@ import { useUserStore } from "@/stores/UserStore";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
 
 const router = useRouter();
-
-const filterOptions = [
-  "All",
-  "Mine",
-  "Today",
-  "This Week",
-  "This Month",
-  "Next Month",
-  "This Year",
-];
 const activeFilter = ref("All");
 
 const setFilter = (filter: string) => {
@@ -49,6 +40,13 @@ const setFilter = (filter: string) => {
 
 const userStore = useUserStore();
 const programmeStore = useProgrammeStore();
+
+const filterOptions = ref([
+  { label: "All", value: "All" },
+  { label: "Today", value: "Today" },
+  { label: "Upcoming", value: "Upcoming" },
+  { label: "Past", value: "Past" },
+]);
 
 onMounted(async () => {
   await userStore.loadUser();
@@ -60,47 +58,22 @@ onMounted(async () => {
 
 const filteredPrograms = computed(() => {
   const today = new Date();
-  const weekStart = new Date();
-  weekStart.setDate(today.getDate() - today.getDay());
-  const weekEnd = new Date();
-  weekEnd.setDate(weekStart.getDate() + 6);
-
-  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-  const nextMonthStart = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-  const nextMonthEnd = new Date(today.getFullYear(), today.getMonth() + 2, 0);
-
-  const yearStart = new Date(today.getFullYear(), 0, 1);
-  const yearEnd = new Date(today.getFullYear(), 11, 31);
 
   switch (activeFilter.value) {
     case "Today":
       return programmeStore.programmes.filter(
-        (p) => p.date === today.toISOString().split("T")[0]
+        (p) => new Date(p.name).toDateString() === today.toDateString()
       );
-    case "This Week":
+    case "Upcoming":
       return programmeStore.programmes.filter((p) => {
-        const programDate = new Date(p.date);
-        return programDate >= weekStart && programDate <= weekEnd;
+        const programDate = new Date(p.name);
+        return programDate > today;
       });
-    case "This Month":
+    case "Past":
       return programmeStore.programmes.filter((p) => {
-        const programDate = new Date(p.date);
-        return programDate >= monthStart && programDate <= monthEnd;
+        const programDate = new Date(p.name);
+        return programDate < today;
       });
-    case "Next Month":
-      return programmeStore.programmes.filter((p) => {
-        const programDate = new Date(p.date);
-        return programDate >= nextMonthStart && programDate <= nextMonthEnd;
-      });
-    case "This Year":
-      return programmeStore.programmes.filter((p) => {
-        const programDate = new Date(p.date);
-        return programDate >= yearStart && programDate <= yearEnd;
-      });
-    case "Personal Programmes":
-      return programmeStore.programmes.filter((p) => isNaN(Number(p.name)));
     default:
       return programmeStore.programmes;
   }
