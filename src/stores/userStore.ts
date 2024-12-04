@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { fetchCurrentUser, type User } from "@/services/UserService";
+import {
+  fetchCurrentUser,
+  fetchUserRoleService,
+  type User,
+} from "@/services/UserService";
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<User | null>(null);
@@ -14,8 +18,18 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const fetchUserRole = async (userId: string) => {
+    try {
+      return await fetchUserRoleService(userId);
+    } catch (error) {
+      console.error("Error fetching user role:", (error as Error).message);
+      return null;
+    }
+  };
+
   return {
     user,
     loadUser,
+    fetchUserRole,
   };
 });

@@ -78,7 +78,6 @@ export class AuthService {
           } else {
             console.error("No user details found in sessionStorage.");
           }
-        } else {
         }
       }
     });

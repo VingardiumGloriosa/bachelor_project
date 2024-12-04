@@ -5,38 +5,22 @@ import { supabase } from "@/supabase/supabase";
 import TopBar from "@/components/shared/TopBar.vue";
 import CoachNavBar from "./components/shared/CoachNavBar.vue";
 import AthleteNavBar from "./components/shared/AthleteNavBar.vue";
+import { useUserStore } from "@/stores/userStore";
 
 const isSignedIn = ref(false);
 const userRole = ref<string | null>(null);
 
 const router = useRouter();
-
-const fetchUserRole = async (userId: string) => {
-  const { data, error } = await supabase.rpc("fetch_user_role", {
-    user_uuid: userId,
-  });
-
-  if (error) {
-    console.error("Error fetching user roles:", error.message);
-    return null;
-  }
-
-  if (data && data.length > 0) {
-    return data[0].role_name;
-  }
-
-  return null;
-};
+const userStore = useUserStore();
 
 onMounted(async () => {
   const {
     data: { user },
-    error,
   } = await supabase.auth.getUser();
 
   if (user) {
     isSignedIn.value = true;
-    const role = await fetchUserRole(user.id);
+    const role = await userStore.fetchUserRole(user.id);
     userRole.value = role;
 
     if (role === "Athlete") {
@@ -51,7 +35,7 @@ onMounted(async () => {
   supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === "SIGNED_IN" && session) {
       isSignedIn.value = true;
-      const role = await fetchUserRole(session.user.id);
+      const role = await userStore.fetchUserRole(session.user.id);
       userRole.value = role;
 
       if (role === "Athlete") {

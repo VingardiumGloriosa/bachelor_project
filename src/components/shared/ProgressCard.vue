@@ -7,7 +7,7 @@
       color="var(--primary)"
       class="text-center"
     >
-      <span class="headline text-h6">{{ percentage }}%</span>
+      <span class="headline text-h6">{{ props.percentage }}%</span>
     </v-progress-circular>
     <Title title="Snatch" />
     <p class="text-grey text-body-2">4 kg to go</p>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import Title from "./Title.vue";
+import Title from "./TitleElement.vue";
 
 const props = defineProps({
   percentage: {

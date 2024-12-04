@@ -18,8 +18,6 @@
 import { ref, watch, onMounted } from "vue";
 import LiftCard from "@/components/progress/LiftCard.vue";
 import HistoryList from "@/components/progress/HistoryList.vue";
-import ProgressGraph from "@/components/progress/ProgressGraph.vue";
-import { supabase } from "@/supabase/supabase";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import { useUserStore } from "@/stores/UserStore";
 import { type Exercise } from "@/components/types/ProgrammeTypes";

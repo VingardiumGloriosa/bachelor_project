@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import Carousel from "@/components/shared/Carousel.vue";
+import Carousel from "@/components/shared/CarouselElement.vue";
 </script>
 
 <style scoped></style>

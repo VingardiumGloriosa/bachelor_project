@@ -26,7 +26,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { useToastStore, ToastType } from "@/stores/ToastStore";
 import { useRouter } from "vue-router";
 import WorkoutDetail from "@/components/programmes/WorkoutDetail.vue";
-import Title from "@/components/shared/Title.vue";
+import Title from "@/components/shared/TitleElement.vue";
 import {
   type Programme,
   type Workout,

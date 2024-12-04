@@ -278,13 +278,13 @@ const removeSet = (
   );
 };
 
-const removeExercise = (workoutIndex: number, exerciseIndex: number) => {
+/* const removeExercise = (workoutIndex: number, exerciseIndex: number) => {
   const workout = programme.workouts[workoutIndex];
   workout.workout_exercises.splice(exerciseIndex, 1);
   workout.workout_exercises.forEach((exercise, index) => {
     exercise.exercise_order = index + 1;
   });
-};
+}; */
 </script>
 
 <style scoped>

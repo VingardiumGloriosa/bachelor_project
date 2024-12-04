@@ -49,7 +49,7 @@ import {
   onMounted,
   onBeforeUnmount,
 } from "vue";
-import Title from "../shared/Title.vue";
+import Title from "../shared/TitleElement.vue";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import { useUserStore } from "@/stores/UserStore";
 import { type Exercise } from "../types/ProgrammeTypes";
