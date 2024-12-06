@@ -11,7 +11,7 @@
     <v-autocomplete
       label="Team"
       v-model="programme.team_id"
-      :items="teams"
+      :items="programmeStore.teams"
       item-title="team_name"
       item-value="team_id"
       placeholder="Select team"
@@ -95,6 +95,14 @@
         <v-btn small @click="addSet(workoutIndex, exerciseIndex)">
           + Add Set
         </v-btn>
+        <v-btn
+          small
+          color="error"
+          class="mt-2"
+          @click="removeExercise(workoutIndex, exerciseIndex)"
+        >
+          Remove Exercise
+        </v-btn>
       </div>
       <v-btn small @click="addExercise(workoutIndex)" class="mt-2">
         + Add Exercise
@@ -119,36 +127,12 @@ import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "vue-router";
 import { useToastStore, ToastType } from "@/stores/ToastStore";
 import { supabase } from "@/supabase/supabase";
+import { validateProgramme } from "@/validation/validation";
 
 const programmeStore = useProgrammeStore();
 const userStore = useUserStore();
 const toastStore = useToastStore();
 const router = useRouter();
-
-const teams = ref([]);
-
-const fetchTeams = async () => {
-  const { data, error } = await supabase.rpc("fetch_teams");
-
-  if (error) {
-    console.error("Error fetching teams:", error.message);
-    return [];
-  }
-
-  return data;
-};
-
-onMounted(async () => {
-  const userResponse = await supabase.auth.getUser();
-  programmeStore.fetchExercises();
-  const user = userResponse.data;
-
-  if (user) {
-    teams.value = await fetchTeams();
-  } else {
-    console.error("No user is logged in.");
-  }
-});
 
 const programme = reactive<Programme>({
   name: "",
@@ -156,70 +140,17 @@ const programme = reactive<Programme>({
   workouts: [],
 });
 
-const validateProgramme = (programme: Programme): string[] => {
-  const errors: string[] = [];
+onMounted(async () => {
+  const userResponse = await supabase.auth.getUser();
+  programmeStore.fetchExercises();
+  const user = userResponse.data;
 
-  if (!programme.name.trim()) {
-    errors.push("Programme must have a name.");
-  }
-
-  if (programme.workouts.length === 0) {
-    errors.push("Programme must have at least one workout.");
+  if (user) {
+    programmeStore.fetchTeams();
   } else {
-    programme.workouts.forEach((workout, workoutIndex) => {
-      if (!workout.name.trim()) {
-        errors.push(`Workout ${workoutIndex + 1} must have a name.`);
-      }
-
-      if (workout.workout_exercises.length === 0) {
-        errors.push(
-          `Workout ${workoutIndex + 1} must have at least one exercise.`
-        );
-      } else {
-        workout.workout_exercises.forEach((exercise, exerciseIndex) => {
-          if (!exercise.exercise_id) {
-            errors.push(
-              `Exercise ${exerciseIndex + 1} in Workout $(
-                workoutIndex + 1
-              ) must be selected.`
-            );
-          }
-
-          if (exercise.sets.length === 0) {
-            errors.push(
-              `Exercise ${exerciseIndex + 1} in Workout $(
-                workoutIndex + 1
-              ) must have at least one set.`
-            );
-          } else {
-            exercise.sets.forEach((set, setIndex) => {
-              if (set.reps === null || set.reps <= 0) {
-                errors.push(
-                  `Set ${setIndex + 1} in Exercise $(
-                    exerciseIndex + 1
-                  ) in Workout $(
-                    workoutIndex + 1
-                  ) must have a valid number of reps.`
-                );
-              }
-              if (set.percentage === null || set.percentage <= 0) {
-                errors.push(
-                  `Set ${setIndex + 1} in Exercise $(
-                    exerciseIndex + 1
-                  ) in Workout $(
-                    workoutIndex + 1
-                  ) must have a valid percentage.`
-                );
-              }
-            });
-          }
-        });
-      }
-    });
+    console.error("No user is logged in.");
   }
-
-  return errors;
-};
+});
 
 const submitProgrammeHandler = async () => {
   try {
@@ -236,7 +167,7 @@ const submitProgrammeHandler = async () => {
       userStore.user?.id as string
     );
     toastStore.toast("Programme submitted successfully!", ToastType.SUCCESS);
-    router.push("/home");
+    router.push("/programmes");
   } catch (err) {
     console.error("Unexpected error:", err);
     toastStore.toast("Unexpected error occurred.", ToastType.ERROR);
@@ -278,13 +209,13 @@ const removeSet = (
   );
 };
 
-/* const removeExercise = (workoutIndex: number, exerciseIndex: number) => {
+const removeExercise = (workoutIndex: number, exerciseIndex: number) => {
   const workout = programme.workouts[workoutIndex];
   workout.workout_exercises.splice(exerciseIndex, 1);
   workout.workout_exercises.forEach((exercise, index) => {
     exercise.exercise_order = index + 1;
   });
-}; */
+};
 </script>
 
 <style scoped>

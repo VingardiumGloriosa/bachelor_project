@@ -6,6 +6,7 @@ import TopBar from "@/components/shared/TopBar.vue";
 import CoachNavBar from "./components/shared/CoachNavBar.vue";
 import AthleteNavBar from "./components/shared/AthleteNavBar.vue";
 import { useUserStore } from "@/stores/userStore";
+import { VSonner } from "vuetify-sonner";
 
 const isSignedIn = ref(false);
 const userRole = ref<string | null>(null);
@@ -66,8 +67,8 @@ onMounted(async () => {
         <p>Loading...</p>
       </div>
     </div>
+    <VSonner position="top-right" />
     <div id="main-content">
-      <VSonner position="top-right" />
       <router-view />
     </div>
   </div>
@@ -85,5 +86,8 @@ onMounted(async () => {
   flex: 1;
   overflow-y: auto;
   padding-bottom: 56px;
+}
+.v-toast-container {
+  z-index: 9999 !important;
 }
 </style>

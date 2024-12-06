@@ -9,16 +9,14 @@ import {
   fetchPersonalRecordService,
   fetchPersonalRecordsService,
   fetchExerciseHistoryService,
-} from "@/services/ProgrammeService";
+  fetchTeamsService,
+} from "@/services/programmeService";
 import {
   type Programme,
   type Workout,
+  type Exercise,
+  type Team,
 } from "@/components/types/ProgrammeTypes";
-
-interface Exercise {
-  name: string;
-  exercise_id: number;
-}
 
 export const useProgrammeStore = defineStore("programme", () => {
   const programmes = ref<Programme[]>([]);
@@ -28,6 +26,7 @@ export const useProgrammeStore = defineStore("programme", () => {
   const selectedProgramme = ref<Programme | null>(null);
   const programmeId = ref<string | null>(null);
   const status = ref<string | null>(null);
+  const teams = ref<Team[]>([]);
 
   const loadProgrammes = async (userId: string) => {
     isLoading.value = true;
@@ -106,6 +105,22 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  const fetchTeams = async () => {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const data = await fetchTeamsService();
+      if (data) {
+        teams.value = data;
+      }
+    } catch (err) {
+      error.value = (err as Error).message;
+      console.error("Error in store:", error.value);
+    } finally {
+      isLoading.value = false;
+    }
+  };
   const submitSet = async (
     workouts: Workout[],
     userId: string
@@ -197,5 +212,7 @@ export const useProgrammeStore = defineStore("programme", () => {
     fetchPersonalRecord,
     fetchPersonalRecords,
     fetchExerciseHistory,
+    teams,
+    fetchTeams,
   };
 });

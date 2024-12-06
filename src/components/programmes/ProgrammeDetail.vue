@@ -117,7 +117,7 @@ const finishProgramme = async () => {
   try {
     await programmeStore.submitSet(workouts, userStore.user.id);
     toastStore.toast("Programme finished successfully!", ToastType.SUCCESS);
-    router.push("/home");
+    router.push("/programmes");
   } catch (err) {
     console.error("Error finishing programme:", err);
     toastStore.toast(

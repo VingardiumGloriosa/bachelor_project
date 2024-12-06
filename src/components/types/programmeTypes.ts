@@ -40,3 +40,9 @@ export interface PR {
   user_id: string;
   achieved_on: Date;
 }
+
+export interface Team {
+  team_id: string;
+  coach_id: string;
+  name: string;
+}

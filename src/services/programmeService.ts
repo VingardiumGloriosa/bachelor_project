@@ -255,3 +255,14 @@ export const submitSetService = async (
     return { status: "Error" };
   }
 };
+
+export const fetchTeamsService = async () => {
+  const { data, error } = await supabase.rpc("fetch_teams");
+
+  if (error) {
+    console.error("Error fetching teams:", error.message);
+    return [];
+  }
+
+  return data;
+};
