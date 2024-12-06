@@ -13,7 +13,6 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       loading.value = true;
       await AuthService.signInWithMagicLink(email);
-      alert("Check your email for a magic link to complete sign-up!");
     } catch (err) {
       error.value = err.message;
       console.error("Error during magic link sign-in:", err.message);

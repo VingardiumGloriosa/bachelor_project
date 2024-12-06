@@ -45,6 +45,7 @@ watch(
           userStore.user.id,
           newExercise.exercise_id
         );
+        console.log("Fetched personal records:", records.value);
       } catch (error) {
         console.error("Failed to fetch personal records:", error);
       }

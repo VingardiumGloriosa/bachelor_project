@@ -109,7 +109,7 @@ export const fetchPersonalRecordService = async (
       ex_id: exerciseId,
       rep_scheme_input: repScheme,
     });
-
+    console.log("data", data);
     if (error) {
       console.error("Error fetching personal record:", error);
       throw new Error(error.message);
@@ -233,6 +233,7 @@ export const submitSetService = async (
       console.error("Error in RPC call:", error);
       return { status: "Error" };
     }
+
     for (const workout of workouts) {
       for (const exercise of workout.workout_exercises) {
         for (const set of exercise.sets) {
@@ -243,12 +244,13 @@ export const submitSetService = async (
             exercise.workout_exercise_id,
             `${set.reps}`
           );
-          if (!currentPR || set.weight > currentPR.weight) {
+          if (!currentPR || (currentPR && set.weight > currentPR.weight)) {
             await postNewPersonalRecord(userId, exercise.exercise_id, set);
           }
         }
       }
     }
+
     return { status: "Success" };
   } catch (error) {
     console.error("Error in submitSetService:", error);

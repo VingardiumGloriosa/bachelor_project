@@ -61,12 +61,14 @@ import { useUserStore } from "@/stores/UserStore";
 import { supabase } from "@/supabase/supabase";
 import { useAuthStore } from "@/stores/AuthStore";
 import GoalProgress from "@/components/home/GoalProgress.vue";
+import { useToastStore, ToastType } from "@/stores/ToastStore";
 
 const router = useRouter();
 const userStore = useUserStore();
 const loading = ref(true);
 const isEditing = ref(false);
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 
 onMounted(async () => {
   try {
@@ -102,7 +104,7 @@ async function getProfile(userId: string) {
     userStore.user.team = data.team;
   } catch (error) {
     console.error("Error fetching profile:", error);
-    alert("Failed to load profile.");
+    toastStore.toast("Failed to load profile.", ToastType.ERROR);
   } finally {
     loading.value = false;
   }
@@ -124,11 +126,11 @@ async function saveProfile() {
 
     if (error) throw error;
 
-    alert("Profile updated successfully!");
+    toastStore.toast("Profile updated successfully!", ToastType.SUCCESS);
     isEditing.value = false;
   } catch (error) {
     console.error("Error updating profile:", error);
-    alert("Failed to update profile.");
+    toastStore.toast("Failed to update profile.", ToastType.ERROR);
   } finally {
     loading.value = false;
   }
