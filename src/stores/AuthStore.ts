@@ -9,14 +9,10 @@ export const useAuthStore = defineStore("auth", () => {
   const error = ref(null);
   const router = useRouter();
 
-  const signInWithMagicLink = async (
-    email: string,
-    userDetails: { firstName: string; lastName: string; roleId: number }
-  ) => {
+  const signInWithMagicLink = async (email: string) => {
     try {
       loading.value = true;
       await AuthService.signInWithMagicLink(email);
-      sessionStorage.setItem("userDetails", JSON.stringify(userDetails));
       alert("Check your email for a magic link to complete sign-up!");
     } catch (err) {
       error.value = err.message;
@@ -26,13 +22,28 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const createUserAndAssignRole = async (
+    userDetails: { firstName: string; lastName: string; roleId: number },
+    userEmail: string
+  ) => {
+    try {
+      const user = await AuthService.createUser(userDetails);
+      await AuthService.assignUserRole(user.id, userDetails.roleId);
+      await AuthService.storeUserSession(userEmail);
+      return user;
+    } catch (err) {
+      console.error("Error creating and assigning user role:", err.message);
+      throw err;
+    }
+  };
+
   const signOut = async () => {
     try {
       loading.value = true;
-      await AuthService.signOut(); // Call AuthService signOut
-      user.value = null; // Clear user data
-      sessionStorage.removeItem("userDetails"); // Clear sessionStorage
-      await router.push({ name: "signin" }); // Redirect to sign-in page
+      await AuthService.signOut();
+      user.value = null;
+      sessionStorage.removeItem("userDetails");
+      await router.push({ name: "signin" });
     } catch (err) {
       error.value = err.message;
       console.error("Error during sign-out:", err.message);
@@ -43,5 +54,12 @@ export const useAuthStore = defineStore("auth", () => {
 
   AuthService.handleAuthStateChange();
 
-  return { user, loading, error, signInWithMagicLink, signOut };
+  return {
+    user,
+    loading,
+    error,
+    signInWithMagicLink,
+    createUserAndAssignRole,
+    signOut,
+  };
 });

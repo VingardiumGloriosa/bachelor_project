@@ -13,46 +13,41 @@ export class AuthService {
     return true;
   }
 
-  static async getCurrentUser() {
-    const { data: user, error } = await supabase.auth.getUser();
-    if (error) throw new Error(error.message);
-    return user;
-  }
-
   static async createUser(userDetails: {
     firstName: string;
     lastName: string;
     email: string;
     roleId: number;
   }) {
-    try {
-      const { data, error } = await supabase
-        .from("users")
-        .insert([
-          {
-            email: userDetails.email,
-            first_name: userDetails.firstName,
-            last_name: userDetails.lastName,
-          },
-        ])
-        .single();
-
-      if (error) throw new Error(error.message);
-
-      const { error: roleError } = await supabase.from("userroles").insert([
+    const { data, error } = await supabase
+      .from("users")
+      .insert([
         {
-          user_id: data.id,
-          role_id: userDetails.roleId,
+          email: userDetails.email,
+          first_name: userDetails.firstName,
+          last_name: userDetails.lastName,
         },
-      ]);
+      ])
+      .single();
 
-      if (roleError) throw new Error(roleError.message);
+    if (error) throw new Error(error.message);
 
-      return data;
-    } catch (error) {
-      console.error("Error creating user and assigning role:", error.message);
-      throw error;
-    }
+    return data;
+  }
+
+  static async assignUserRole(userId: string, roleId: number) {
+    const { error } = await supabase.from("userroles").insert([
+      {
+        user_id: userId,
+        role_id: roleId,
+      },
+    ]);
+    if (error) throw new Error(error.message);
+  }
+
+  static async storeUserSession(userEmail: string) {
+    const { error } = await supabase.auth.updateUser({ email: userEmail });
+    if (error) throw new Error(error.message);
   }
 
   static async handleAuthStateChange() {

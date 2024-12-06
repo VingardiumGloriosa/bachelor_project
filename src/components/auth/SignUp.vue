@@ -26,51 +26,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { supabase } from "@/supabase/supabase";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
-import ArrowBack from "../shared/ArrowBack.vue";
 import { useAuthStore } from "@/stores/AuthStore";
+import { useToastStore, ToastType } from "@/stores/ToastStore";
 
 const email = ref("");
 const loading = ref(false);
 const router = useRouter();
-
 const auth = useAuthStore();
+const toastStore = useToastStore();
 
 const handleSignup = async () => {
   try {
+    // Request magic link via Supabase
     await auth.signInWithMagicLink(email.value);
-    alert("Check your email for the magic link to log in!");
+    toastStore.toast(
+      "Check your email for the magic link to log in!",
+      ToastType.SUCCESS
+    );
   } catch (error) {
     console.error("Error during sign-in:", error.message);
-  }
-};
-
-onMounted(() => {
-  supabase.auth.onAuthStateChange(async (event, session) => {
-    if (event === "SIGNED_IN" && session) {
-      const userDetails = session.user;
-      await handleUserAfterSignup(userDetails);
-    }
-  });
-});
-
-const handleUserAfterSignup = async (userDetails) => {
-  try {
-    const { error } = await supabase.from("users").upsert({
-      id: userDetails.id,
-      email: userDetails.email,
-      first_name: "",
-      last_name: "",
-    });
-
-    if (error) throw error;
-
-    alert("User details saved successfully!");
-    router.push("/dashboard");
-  } catch (error) {
-    console.error("Error saving user details:", error.message);
+    toastStore.toast(
+      "Failed to send magic link. Please try again.",
+      ToastType.ERROR
+    );
   }
 };
 

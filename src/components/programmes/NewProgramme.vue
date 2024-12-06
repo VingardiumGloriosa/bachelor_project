@@ -120,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { reactive, onMounted } from "vue";
 import { type Programme } from "@/components/types/ProgrammeTypes";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import { useUserStore } from "@/stores/UserStore";

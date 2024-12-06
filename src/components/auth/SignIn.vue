@@ -30,18 +30,24 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/AuthStore";
+import { useToastStore, ToastType } from "@/stores/ToastStore";
 import ArrowBack from "../shared/ArrowBack.vue";
 
 const email = ref("");
 const router = useRouter();
 const auth = useAuthStore();
+const toastStore = useToastStore();
 
 const handleLogin = async () => {
   try {
     await auth.signInWithMagicLink(email.value);
-    alert("Check your email for the magic link to log in!");
+    toastStore.toast(
+      "Check your email for the magic link to log in!",
+      ToastType.SUCCESS
+    );
   } catch (error) {
     console.error("Error during sign-in:", error.message);
+    toastStore.toast("Error signing in. Please try again.", ToastType.ERROR);
   }
 };
 
