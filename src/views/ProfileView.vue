@@ -225,4 +225,8 @@ function cancelEdit() {
 .buttons button:disabled {
   background-color: #ccc;
 }
+
+.v-btn {
+  width: 100%;
+}
 </style>

@@ -127,3 +127,8 @@ const finishProgramme = async () => {
   }
 };
 </script>
+<style scoped>
+.v-btn {
+  width: 100%;
+}
+</style>

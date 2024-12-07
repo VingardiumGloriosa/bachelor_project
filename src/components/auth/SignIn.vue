@@ -83,4 +83,8 @@ const signup = () => {
   top: 20px;
   left: 20px;
 }
+
+.v-btn {
+  width: 100%;
+}
 </style>

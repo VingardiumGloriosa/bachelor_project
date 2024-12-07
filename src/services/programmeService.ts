@@ -55,14 +55,6 @@ export const submitProgrammeService = async (
   team_uuid: string,
   workouts: []
 ): Promise<{ status: string; programme_id?: string } | null> => {
-  console.log(
-    "submitProgrammeService",
-    programme_name,
-    programme_type,
-    user_uuid,
-    team_uuid,
-    workouts
-  );
   try {
     const { data, error } = await supabase.rpc("create_programme", {
       programme_name,

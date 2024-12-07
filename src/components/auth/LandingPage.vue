@@ -38,4 +38,8 @@ const goToSignIn = () => {
   height: auto;
   margin-bottom: 20px;
 }
+
+.v-btn {
+  width: 100%;
+}
 </style>

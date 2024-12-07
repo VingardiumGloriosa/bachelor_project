@@ -90,4 +90,8 @@ function close() {
   text-align: center;
   cursor: pointer;
 }
+
+.v-btn {
+  width: 100%;
+}
 </style>

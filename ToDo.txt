@@ -30,3 +30,7 @@ refactor my files so that theyre under 150 - 200 liens and reuasble components a
 
 signup broken
 update user refactor and broken
+Add set not working properly
+remove set not working properl
+
+add set and remove exerrcise should be in the sme row

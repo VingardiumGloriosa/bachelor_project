@@ -40,8 +40,7 @@
     </div>
 
     <div class="button-container">
-      <!-- Buttons to be implemented -->
-      <v-btn class="btn-small" @click="addSet">+ Add Set</v-btn>
+      ň <v-btn class="btn-small" @click="addSet">+ Add Set</v-btn>
       <v-btn class="btn-small" @click="addComment">+ Add Comment</v-btn>
     </div>
   </v-container>
