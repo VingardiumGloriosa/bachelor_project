@@ -9,6 +9,7 @@
       class="mb-4"
     />
     <v-autocomplete
+      v-if="userRole === 'Coach'"
       label="Team"
       v-model="programme.team_id"
       :items="programmeStore.teams"
@@ -19,11 +20,23 @@
       class="mb-2"
     />
     <v-autocomplete
+      v-if="userRole === 'Coach'"
       label="Programme Type"
       v-model="programme.type"
-      :items="['personal', 'official']"
-      placeholder="Select type"
+      :items="['official']"
+      placeholder="Official"
       dense
+      readonly
+      class="mb-4"
+    />
+    <v-autocomplete
+      v-else
+      label="Programme Type"
+      v-model="programme.type"
+      :items="['personal']"
+      placeholder="Personal"
+      dense
+      readonly
       class="mb-4"
     />
     <div
@@ -120,41 +133,52 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, ref } from "vue";
 import { type Programme } from "@/components/types/ProgrammeTypes";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
 import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "vue-router";
 import { useToastStore, ToastType } from "@/stores/ToastStore";
-import { supabase } from "@/supabase/supabase";
 import { validateProgramme } from "@/validation/validation";
 
 const programmeStore = useProgrammeStore();
 const userStore = useUserStore();
 const toastStore = useToastStore();
 const router = useRouter();
+const userRole = ref<string | null>(null);
 
 const programme = reactive<Programme>({
   name: "",
-  type: "personal",
+  type: "",
+  team_id: null,
   workouts: [],
 });
 
 onMounted(async () => {
-  const userResponse = await supabase.auth.getUser();
-  programmeStore.fetchExercises();
-  const user = userResponse.data;
+  const role = await userStore.fetchUserRole(userStore.user?.id);
+  userRole.value = role;
 
-  if (user) {
+  if (role === "Coach") {
+    programme.type = "official";
+    programme.team_id = null;
+  } else if (role === "Athlete") {
+    programme.type = "personal";
+    programme.team_id = null;
+    delete programme.team_id;
+  }
+
+  programmeStore.fetchExercises();
+  if (role === "Coach") {
     programmeStore.fetchTeams();
-  } else {
-    console.error("No user is logged in.");
   }
 });
-
 const submitProgrammeHandler = async () => {
   try {
-    const validationErrors = validateProgramme(programme);
+    if (userRole.value === "Athlete") {
+      programme.team_id = null;
+    }
+
+    const validationErrors = validateProgramme(programme, userRole.value);
     if (validationErrors.length > 0) {
       validationErrors.forEach((error) => {
         toastStore.toast(error, ToastType.ERROR);

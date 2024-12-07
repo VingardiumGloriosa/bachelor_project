@@ -1,10 +1,29 @@
 import { type Programme } from "@/components/types/ProgrammeTypes";
 
-export const validateProgramme = (programme: Programme): string[] => {
+export const validateProgramme = (
+  programme: Programme,
+  userRole: string | null
+): string[] => {
   const errors: string[] = [];
 
   if (!programme.name.trim()) {
     errors.push("Programme must have a name.");
+  }
+
+  if (userRole === "Athlete") {
+    if (programme.type !== "personal") {
+      errors.push("Athletes can only create personal programmes.");
+    }
+
+    if (programme.team_id !== null) {
+      errors.push("Athletes cannot select a team.");
+    }
+  }
+
+  if (userRole === "Coach") {
+    if (!programme.team_id) {
+      errors.push("Coaches must select a team.");
+    }
   }
 
   if (programme.workouts.length === 0) {
