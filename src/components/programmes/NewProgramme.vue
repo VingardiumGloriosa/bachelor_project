@@ -42,84 +42,16 @@
     <div
       v-for="(workout, workoutIndex) in programme.workouts"
       :key="workoutIndex"
-      class="mb-4"
     >
-      <v-text-field
-        label="Workout Name"
-        v-model="workout.name"
-        placeholder="Enter workout name"
-        dense
-        class="mb-2"
+      <WorkoutComponent
+        :workout="workout"
+        :workoutIndex="workoutIndex"
+        :exercises="programmeStore.exercises"
+        @add-exercise="addExercise"
+        @remove-exercise="removeExercise"
+        @add-set="addSet"
+        @remove-set="removeSet"
       />
-      <div
-        v-for="(exercise, exerciseIndex) in workout.workout_exercises"
-        :key="exerciseIndex"
-        class="mb-4"
-      >
-        <v-autocomplete
-          label="Exercise"
-          v-model="exercise.exercise_id"
-          :items="programmeStore.exercises"
-          item-title="name"
-          item-value="exercise_id"
-          placeholder="Select exercise"
-          dense
-          class="mb-2"
-        />
-        <v-table>
-          <thead>
-            <tr>
-              <th class="text-left">Reps</th>
-              <th class="text-left">%</th>
-              <th class="text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(set, setIndex) in exercise.sets" :key="setIndex">
-              <td>
-                <v-text-field
-                  v-model="set.reps"
-                  type="number"
-                  placeholder="Reps"
-                  dense
-                  hide-details
-                />
-              </td>
-              <td>
-                <v-text-field
-                  v-model="set.percentage"
-                  type="number"
-                  placeholder="%"
-                  dense
-                  hide-details
-                />
-              </td>
-              <td>
-                <v-btn
-                  icon
-                  @click="removeSet(workoutIndex, exerciseIndex, setIndex)"
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </td>
-            </tr>
-          </tbody>
-        </v-table>
-        <v-btn small @click="addSet(workoutIndex, exerciseIndex)">
-          + Add Set
-        </v-btn>
-        <v-btn
-          small
-          color="error"
-          class="mt-2"
-          @click="removeExercise(workoutIndex, exerciseIndex)"
-        >
-          Remove Exercise
-        </v-btn>
-      </div>
-      <v-btn small @click="addExercise(workoutIndex)" class="mt-2">
-        + Add Exercise
-      </v-btn>
     </div>
     <v-btn small @click="addWorkout" class="mb-4">+ Add Workout</v-btn>
     <v-btn
@@ -140,6 +72,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "vue-router";
 import { useToastStore, ToastType } from "@/stores/ToastStore";
 import { validateProgramme } from "@/validation/validation";
+import WorkoutComponent from "./WorkoutComponent.vue";
 
 const programmeStore = useProgrammeStore();
 const userStore = useUserStore();
@@ -172,6 +105,7 @@ onMounted(async () => {
     programmeStore.fetchTeams();
   }
 });
+
 const submitProgrammeHandler = async () => {
   try {
     if (userRole.value === "Athlete") {
@@ -253,19 +187,5 @@ const removeExercise = (workoutIndex: number, exerciseIndex: number) => {
   background-color: var(--light-grey);
   border-radius: 16px;
   padding: 20px;
-}
-
-.v-table th,
-.v-table td {
-  border-top: 2px solid white;
-  border-bottom: 2px solid white;
-}
-
-.v-btn.small {
-  font-size: 12px;
-}
-
-.v-btn {
-  margin-right: 8px;
 }
 </style>
