@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
+import { parseISO, isValid, format } from "date-fns";
 
 const props = defineProps({
   date: {
@@ -16,13 +17,13 @@ const props = defineProps({
 });
 
 const isValidDate = (dateString: string) => {
-  const dateObj = new Date(dateString);
-  return !isNaN(dateObj.getTime());
+  const dateObj = parseISO(dateString);
+  return isValid(dateObj);
 };
 
 const dayOfWeek = computed(() => {
   if (isValidDate(props.date)) {
-    const dateObj = new Date(props.date);
+    const dateObj = parseISO(props.date);
     const days = [
       "Sunday",
       "Monday",
@@ -40,12 +41,8 @@ const dayOfWeek = computed(() => {
 
 const formattedDate = computed(() => {
   if (isValidDate(props.date)) {
-    const dateObj = new Date(props.date);
-    return dateObj.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    const dateObj = parseISO(props.date);
+    return format(dateObj, "MMMM dd, yyyy");
   } else {
     return null;
   }

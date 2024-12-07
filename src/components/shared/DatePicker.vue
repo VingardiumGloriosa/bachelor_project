@@ -44,7 +44,7 @@ const closeMenu = () => {
 
 const handleOkClick = () => {
   if (selectedDate.value) {
-    const formatted = format(new Date(selectedDate.value), "dd/MM/yyyy");
+    const formatted = format(new Date(selectedDate.value), "yyyy-MM-dd");
     emit("updateName", formatted);
   }
   closeMenu();
@@ -56,7 +56,7 @@ const handleTextFieldClick = () => {
 
 const formattedDate = computed(() => {
   return selectedDate.value
-    ? format(new Date(selectedDate.value), "dd/MM/yyyy")
+    ? format(new Date(selectedDate.value), "yyyy-MM-dd")
     : "";
 });
 </script>

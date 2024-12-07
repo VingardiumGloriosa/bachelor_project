@@ -30,6 +30,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
+import { parseISO } from "date-fns";
 
 const router = useRouter();
 const activeFilter = ref("All");
@@ -59,24 +60,20 @@ onMounted(async () => {
 const filteredPrograms = computed(() => {
   const today = new Date();
 
-  switch (activeFilter.value) {
-    case "Today":
-      return programmeStore.programmes.filter(
-        (p) => new Date(p.name).toDateString() === today.toDateString()
-      );
-    case "Upcoming":
-      return programmeStore.programmes.filter((p) => {
-        const programDate = new Date(p.name);
+  return programmeStore.programmes.filter((p) => {
+    const programDate = parseISO(p.name);
+
+    switch (activeFilter.value) {
+      case "Today":
+        return programDate.toDateString() === today.toDateString();
+      case "Upcoming":
         return programDate > today;
-      });
-    case "Past":
-      return programmeStore.programmes.filter((p) => {
-        const programDate = new Date(p.name);
+      case "Past":
         return programDate < today;
-      });
-    default:
-      return programmeStore.programmes;
-  }
+      default:
+        return true;
+    }
+  });
 });
 
 const goToProgrammeDetail = (programmeId: string, programmeTitle: string) => {
