@@ -164,7 +164,6 @@ onMounted(async () => {
 });
 
 const updateProgrammeName = (date: string) => {
-  console.log(date);
   programme.name = date;
 };
 

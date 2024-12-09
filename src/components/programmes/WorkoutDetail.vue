@@ -55,8 +55,6 @@ const props = defineProps<{
   workout: Workout;
 }>();
 
-console.log(props.workout);
-
 watch(
   () => props.workout,
   (newWorkout) => {

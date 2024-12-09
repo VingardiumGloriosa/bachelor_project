@@ -108,7 +108,6 @@ export const fetchPersonalRecordService = async (
       ex_id: exerciseId,
       rep_scheme_input: repScheme,
     });
-    console.log("data", data);
     if (error) {
       console.error("Error fetching personal record:", error);
       throw new Error(error.message);
