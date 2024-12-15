@@ -137,7 +137,7 @@ export const fetchPersonalRecordsService = async (
 
     return data;
   } catch (err) {
-    console.error("Error in fetchPersonalRecordService:", err);
+    console.error("Error in fetchPersonalRecordsService:", err);
     throw err;
   }
 };
@@ -239,10 +239,17 @@ export const submitSetService = async (
 
           const currentPR = await fetchPersonalRecordService(
             userId,
-            exercise.workout_exercise_id,
-            `${set.reps}`
+            exercise.exercise_id,
+            set.reps
           );
-          if (!currentPR || (currentPR && set.weight > currentPR.weight)) {
+          const currentPRData =
+            currentPR && currentPR.length > 0 ? currentPR[0] : null;
+
+          if (currentPRData) {
+            if (set.weight > currentPRData.weight) {
+              await postNewPersonalRecord(userId, exercise.exercise_id, set);
+            }
+          } else {
             await postNewPersonalRecord(userId, exercise.exercise_id, set);
           }
         }

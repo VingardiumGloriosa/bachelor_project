@@ -109,12 +109,6 @@ const uniqueRepSchemes = computed(() => {
     return [];
   }
 });
-
-watch(uniqueRepSchemes, (newRepSchemes) => {
-  if (newRepSchemes.length > 0 && !activeFilter.value) {
-    activeFilter.value = newRepSchemes[0];
-  }
-});
 </script>
 
 <style scoped>

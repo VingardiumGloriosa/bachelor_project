@@ -1,7 +1,6 @@
 HIGHEST PRIORITY
 as athlete in programme
 -tooltips should show suggestions of "last done"
--input weights should be pre-populted with the appropriate calculation of what weight to take
 - if athlete, add "MINE" filter
 
 make it all into a pwa
