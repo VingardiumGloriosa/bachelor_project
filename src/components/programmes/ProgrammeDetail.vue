@@ -8,6 +8,7 @@
       class="mb-4"
       @updateWorkout="updateWorkout(workout.workout_id, $event)"
     />
+    <v-btn class="btn-tertiary mb-4" @click="null">Add comment</v-btn>
     <v-btn class="btn-primary mb-4" @click="finishProgramme"
       >Finish Workout</v-btn
     >
@@ -40,7 +41,7 @@ const userStore = useUserStore();
 const toastStore = useToastStore();
 const router = useRouter();
 
-const programme = ref<Programme | null>(null);
+const programme = ref<Programme>();
 const programmeTitle = ref<string>("");
 const workoutInputs = ref<Record<string, Workout>>({});
 

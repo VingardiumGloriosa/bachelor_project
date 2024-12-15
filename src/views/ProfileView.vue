@@ -23,7 +23,7 @@
 
       <div class="bottom-left">
         <div class="team-name">
-          {{ userStore.user.team?.name || "No Team Assigned" }}
+          {{ userStore.user.team?.name || "TO BE FIXED" }}
         </div>
 
         <div class="email">
