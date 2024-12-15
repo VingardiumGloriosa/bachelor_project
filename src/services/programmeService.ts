@@ -189,7 +189,11 @@ const postNewPersonalRecord = async (
 export const submitSetService = async (
   workouts: Workout[],
   userId: string
-): Promise<{ status: string } | null> => {
+): Promise<{
+  status: string;
+  achievedPRs: { exercise: string; weight: number }[];
+}> => {
+  const achievedPRs: { exercise: string; weight: number }[] = [];
   try {
     const workoutsPlain = workouts.map((workout) =>
       JSON.parse(JSON.stringify(workout))
@@ -197,10 +201,6 @@ export const submitSetService = async (
 
     const workoutPayload = workoutsPlain.map((workout) => {
       if (!Array.isArray(workout.workout_exercises)) {
-        console.error(
-          "Error: workout_exercises is not an array or is undefined for workout",
-          workout.workout_id
-        );
         throw new Error("Invalid workout structure");
       }
 
@@ -229,7 +229,7 @@ export const submitSetService = async (
 
     if (error) {
       console.error("Error in RPC call:", error);
-      return { status: "Error" };
+      return { status: "Error", achievedPRs: [] };
     }
 
     for (const workout of workouts) {
@@ -242,24 +242,33 @@ export const submitSetService = async (
             exercise.exercise_id,
             set.reps
           );
+
           const currentPRData =
             currentPR && currentPR.length > 0 ? currentPR[0] : null;
 
           if (currentPRData) {
             if (set.weight > currentPRData.weight) {
               await postNewPersonalRecord(userId, exercise.exercise_id, set);
+              achievedPRs.push({
+                exercise: exercise.exercise,
+                weight: set.weight,
+              });
             }
           } else {
             await postNewPersonalRecord(userId, exercise.exercise_id, set);
+            achievedPRs.push({
+              exercise: exercise.exercise,
+              weight: set.weight,
+            });
           }
         }
       }
     }
 
-    return { status: "Success" };
+    return { status: "Success", achievedPRs };
   } catch (error) {
     console.error("Error in submitSetService:", error);
-    return { status: "Error" };
+    return { status: "Error", achievedPRs: [] };
   }
 };
 

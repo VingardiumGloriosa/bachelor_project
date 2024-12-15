@@ -121,10 +121,14 @@ export const useProgrammeStore = defineStore("programme", () => {
       isLoading.value = false;
     }
   };
+
   const submitSet = async (
     workouts: Workout[],
     userId: string
-  ): Promise<void> => {
+  ): Promise<{
+    status: string;
+    achievedPRs: { exercise: string; weight: number }[];
+  }> => {
     isLoading.value = true;
     error.value = null;
     try {
@@ -132,10 +136,14 @@ export const useProgrammeStore = defineStore("programme", () => {
 
       if (response) {
         status.value = response.status;
+        return response;
+      } else {
+        return { status: "Error", achievedPRs: [] };
       }
     } catch (err) {
       error.value = (err as Error).message;
       console.error("Error in store:", error.value);
+      return { status: "Error", achievedPRs: [] };
     } finally {
       isLoading.value = false;
     }

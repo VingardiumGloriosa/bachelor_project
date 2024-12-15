@@ -79,10 +79,30 @@ const finishProgramme = async () => {
       });
     });
   });
+
   try {
-    await programmeStore.submitSet(workouts, userStore.user.id);
-    toastStore.toast("Programme finished successfully!", ToastType.SUCCESS);
-    router.push("/programmes");
+    const response = await programmeStore.submitSet(
+      workouts,
+      userStore.user.id
+    );
+
+    if (response.status === "Success") {
+      toastStore.toast("Programme finished successfully!", ToastType.SUCCESS);
+
+      response.achievedPRs.forEach((pr) => {
+        toastStore.toast(
+          `New PR achieved for ${pr.exercise}: ${pr.weight} kg!`,
+          ToastType.SUCCESS
+        );
+      });
+
+      router.push("/programmes");
+    } else {
+      toastStore.toast(
+        "An error occurred while finishing the programme.",
+        ToastType.ERROR
+      );
+    }
   } catch (err) {
     console.error("Error finishing programme:", err);
     toastStore.toast(
