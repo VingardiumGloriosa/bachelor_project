@@ -70,51 +70,15 @@ const updateWorkout = (workoutId: string, updatedData: Workout) => {
 
 const finishProgramme = async () => {
   const workouts = Object.values(workoutInputs.value);
-  const errors: string[] = [];
-
-  workouts.forEach((workoutDetail: Workout) => {
-    if (
-      !workoutDetail.workout_exercises ||
-      workoutDetail.workout_exercises.length === 0
-    ) {
-      errors.push(`Workout "${workoutDetail.name}" is missing exercises.`);
-      return;
-    }
-
-    workoutDetail.workout_exercises.forEach((exercise: WorkoutExercise) => {
-      if (!exercise.sets || exercise.sets.length === 0) {
-        errors.push(
-          `Exercise "${exercise.exercise_id}" in workout "${workoutDetail.name}" is missing sets.`
-        );
-      }
-
+  workouts.forEach((workout) => {
+    workout.workout_exercises.forEach((exercise: WorkoutExercise) => {
       exercise.sets.forEach((set: Set) => {
         if (set.success === undefined) {
           set.success = false;
         }
-
-        if (!set.weight || isNaN(Number(set.weight))) {
-          errors.push(
-            `Set ${set.set_id} in exercise "${exercise.exercise_id}" in workout "${workoutDetail.name}" is missing a valid weight.`
-          );
-        }
-
-        if (set.reps === null || set.reps <= 0) {
-          errors.push(
-            `Set ${set.set_id} in exercise "${exercise.exercise_id}" in workout "${workoutDetail.name}" has invalid reps.`
-          );
-        }
       });
     });
   });
-
-  if (errors.length > 0) {
-    errors.forEach((error) => {
-      toastStore.toast(error, ToastType.ERROR);
-    });
-    return;
-  }
-
   try {
     await programmeStore.submitSet(workouts, userStore.user.id);
     toastStore.toast("Programme finished successfully!", ToastType.SUCCESS);

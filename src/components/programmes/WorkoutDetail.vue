@@ -29,7 +29,12 @@
                     <v-text-field
                       v-model="set.weight"
                       type="number"
-                      :placeholder="'Enter weight'"
+                      :placeholder="
+                        getPRPlaceholder(
+                          workoutExercise.exercise_id,
+                          set.percentage
+                        )
+                      "
                       dense
                       hide-details
                     />
@@ -48,14 +53,65 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, watch } from "vue";
-import { type Workout } from "@/components/types/ProgrammeTypes";
-
-const emit = defineEmits(["updateWorkout"]);
+import { ref, watch, defineProps, defineEmits } from "vue";
+import { useProgrammeStore } from "@/stores/ProgrammeStore";
+import { useUserStore } from "@/stores/UserStore";
+import type { Workout } from "@/components/types/ProgrammeTypes";
 
 const props = defineProps<{
   workout: Workout;
 }>();
+
+const programmeStore = useProgrammeStore();
+const userStore = useUserStore();
+const workoutPRs = ref([]);
+
+const emit = defineEmits(["updateWorkout"]);
+
+const fetchWorkoutPRs = async () => {
+  try {
+    const userId = userStore.user?.id;
+    if (props.workout && props.workout.workout_exercises) {
+      const prs = [];
+      for (const exercise of props.workout.workout_exercises) {
+        const pr = await programmeStore.fetchPersonalRecord(
+          userId,
+          exercise.exercise_id,
+          "1"
+        );
+        if (pr) {
+          prs.push(pr);
+        }
+      }
+      workoutPRs.value = prs;
+    }
+  } catch (error) {
+    console.error("Error fetching single-lift PRs:", error);
+  }
+};
+
+const getPRPlaceholder = (exerciseId, percentage) => {
+  const matchingPR = workoutPRs.value
+    .flat()
+    .find((pr) => pr.exercise_id === exerciseId);
+  if (matchingPR) {
+    const prWeight = matchingPR.weight;
+    const calculatedWeight = (prWeight * percentage) / 100;
+    return calculatedWeight.toFixed(2);
+  }
+
+  return "Enter weight";
+};
+
+watch(
+  () => props.workout,
+  async (newWorkout) => {
+    if (newWorkout) {
+      await fetchWorkoutPRs();
+    }
+  },
+  { immediate: true, deep: true }
+);
 
 watch(
   () => props.workout,
@@ -65,6 +121,7 @@ watch(
   { deep: true }
 );
 </script>
+
 <style scoped>
 .lift-card {
   background-color: var(--light-grey);
@@ -92,7 +149,7 @@ watch(
 }
 
 @media (max-width: 600px) {
-  .responsive-tabfle th,
+  .responsive-table th,
   .responsive-table td {
     padding: 4px;
     font-size: 12px;
@@ -118,12 +175,6 @@ watch(
 .v-checkbox {
   display: flex;
   justify-content: center;
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 16px;
 }
 
 .v-card-title {
