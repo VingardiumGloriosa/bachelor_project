@@ -30,3 +30,5 @@ coverage
 
 *.tsbuildinfo
 src/supabase/supabase.js
+
+.vercel

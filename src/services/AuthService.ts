@@ -77,4 +77,17 @@ export class AuthService {
       }
     });
   }
+  static async signInWithOTP(email: string) {
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) throw new Error(error.message);
+  }
+
+  static async verifyOTP(email: string, otp: string) {
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: otp,
+      type: "email", // Ensure this matches Supabase auth type
+    });
+    if (error) throw new Error(error.message);
+  }
 }

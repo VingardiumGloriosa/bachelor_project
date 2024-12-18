@@ -2,7 +2,9 @@
   <arrow-back @click="close" class="backbtn" />
   <v-container class="general">
     <h1>Sign-in</h1>
-    <v-form @submit.prevent="handleLogin">
+
+    <!-- Step 1: Request OTP -->
+    <v-form v-if="!otpSent" @submit.prevent="requestOTP">
       <p>Email Address</p>
       <v-text-field
         v-model="email"
@@ -18,10 +20,32 @@
         :disabled="auth.loading"
         type="submit"
       >
-        Continue
+        Request OTP
       </v-btn>
       <p class="text-grey text-center">Don't have an account?</p>
       <p class="text-center" @click="signup">Create Account</p>
+    </v-form>
+
+    <!-- Step 2: Enter OTP -->
+    <v-form v-else @submit.prevent="verifyOTP">
+      <p>Enter OTP</p>
+      <v-text-field
+        v-model="otp"
+        label="One-Time Password"
+        type="text"
+        required
+        variant="outlined"
+        rounded="lg"
+      />
+      <v-btn
+        class="btn-primary"
+        :loading="auth.loading"
+        :disabled="auth.loading"
+        type="submit"
+      >
+        Verify OTP
+      </v-btn>
+      <p class="text-center text-grey" @click="resetOTP">Resend OTP</p>
     </v-form>
   </v-container>
 </template>
@@ -34,21 +58,39 @@ import { useToastStore, ToastType } from "@/stores/ToastStore";
 import ArrowBack from "../shared/ArrowBack.vue";
 
 const email = ref("");
+const otp = ref("");
+const otpSent = ref(false);
 const router = useRouter();
 const auth = useAuthStore();
 const toastStore = useToastStore();
 
-const handleLogin = async () => {
+const requestOTP = async () => {
   try {
-    await auth.signInWithMagicLink(email.value);
+    await auth.signInWithOTP(email.value);
+    otpSent.value = true;
     toastStore.toast(
-      "Check your email for the magic link to log in!",
+      "OTP sent to your email. Please check!",
       ToastType.SUCCESS
     );
   } catch (error) {
-    console.error("Error during sign-in:", error.message);
-    toastStore.toast("Error signing in. Please try again.", ToastType.ERROR);
+    console.error("Error requesting OTP:", error.message);
+    toastStore.toast("Failed to send OTP. Please try again.", ToastType.ERROR);
   }
+};
+
+const verifyOTP = async () => {
+  try {
+    await auth.verifyOTP(email.value, otp.value);
+    toastStore.toast("Successfully signed in!", ToastType.SUCCESS);
+    router.push("/"); // Redirect to home page or desired route
+  } catch (error) {
+    console.error("Error verifying OTP:", error.message);
+    toastStore.toast("Invalid OTP. Please try again.", ToastType.ERROR);
+  }
+};
+
+const resetOTP = () => {
+  otpSent.value = false;
 };
 
 const close = () => {
@@ -86,5 +128,10 @@ const signup = () => {
 
 .v-btn {
   width: 100%;
+}
+
+.text-grey {
+  color: grey;
+  cursor: pointer;
 }
 </style>

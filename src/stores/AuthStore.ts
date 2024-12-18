@@ -51,6 +51,32 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const signInWithOTP = async (email: string) => {
+    try {
+      loading.value = true;
+      await AuthService.signInWithOTP(email);
+    } catch (err) {
+      error.value = err.message;
+      console.error("Error requesting OTP:", err.message);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const verifyOTP = async (email: string, otp: string) => {
+    try {
+      loading.value = true;
+      await AuthService.verifyOTP(email, otp);
+    } catch (err) {
+      error.value = err.message;
+      console.error("Error verifying OTP:", err.message);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   AuthService.handleAuthStateChange();
 
   return {
@@ -60,5 +86,7 @@ export const useAuthStore = defineStore("auth", () => {
     signInWithMagicLink,
     createUserAndAssignRole,
     signOut,
+    verifyOTP,
+    signInWithOTP,
   };
 });
