@@ -5,7 +5,7 @@ import { supabase } from "@/supabase/supabase";
 import TopBar from "@/components/shared/TopBar.vue";
 import CoachNavBar from "./components/shared/CoachNavBar.vue";
 import AthleteNavBar from "./components/shared/AthleteNavBar.vue";
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/UserStore";
 import { VSonner } from "vuetify-sonner";
 
 const isSignedIn = ref(false);
