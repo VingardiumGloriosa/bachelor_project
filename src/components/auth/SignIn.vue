@@ -82,7 +82,7 @@ const verifyOTP = async () => {
   try {
     await auth.verifyOTP(email.value, otp.value);
     toastStore.toast("Successfully signed in!", ToastType.SUCCESS);
-    router.push("/"); // Redirect to home page or desired route
+    router.push("/home");
   } catch (error) {
     console.error("Error verifying OTP:", error.message);
     toastStore.toast("Invalid OTP. Please try again.", ToastType.ERROR);

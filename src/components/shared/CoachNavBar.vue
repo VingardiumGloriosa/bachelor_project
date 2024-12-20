@@ -2,7 +2,7 @@
   <nav class="navbar">
     <ul class="navbar-list">
       <li class="navbar-item">
-        <router-link to="/home-coach" class="nav-link" active-class="active">
+        <router-link to="/home" class="nav-link" active-class="active">
           <img src="@/assets/home.svg" alt="Home" />
         </router-link>
       </li>

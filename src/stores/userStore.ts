@@ -4,28 +4,31 @@ import { fetchCurrentUser, fetchUserRoleService } from "@/services/UserService";
 import { type User } from "@/components/types/UserTypes";
 
 export const useUserStore = defineStore("user", () => {
-  const user = ref<User | null>(null);
-
+  const user = ref<User | null | undefined>(undefined);
+  const role = ref(null);
   const loadUser = async () => {
     try {
       user.value = await fetchCurrentUser();
     } catch (error) {
-      console.error("Error loading user:", (error as Error).message);
+      console.error("Error loading user:", error.message);
       user.value = null;
     }
   };
 
   const fetchUserRole = async (userId: string) => {
     try {
-      return await fetchUserRoleService(userId);
+      const fetchedRole = await fetchUserRoleService(userId);
+      role.value = fetchedRole;
+      return fetchedRole;
     } catch (error) {
-      console.error("Error fetching user role:", (error as Error).message);
+      console.error("Error fetching user role:", error.message);
       return null;
     }
   };
 
   return {
     user,
+    role,
     loadUser,
     fetchUserRole,
   };

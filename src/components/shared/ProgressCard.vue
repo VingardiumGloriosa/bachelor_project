@@ -25,10 +25,6 @@ import Title from "./TitleElement.vue";
 import { defineProps } from "vue";
 
 const props = defineProps({
-  percentage: {
-    type: Number,
-    required: true,
-  },
   goalWeight: {
     type: Number,
     required: true,
