@@ -1,24 +1,19 @@
 HIGHEST PRIORITY
-- if athlete, add "MINE" filter
-
 Pre submit bugs
 fix signup
 fix graphs 
 fix edit profile
-
+fix color grading of calendar
+fix color grading of creating programme
 --
 
 POST HANDIN
 setup goal creation
 setup add PR functionalitz
 setup add comments functionalitz
-signup broken
-update user refactor and broken
 show coach staus under coahc profile
 --
 
 LOWEST PRIORITY
 fix graph
 - ugly atm
-homehighlight fix
-- should be dynamic

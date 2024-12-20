@@ -30,7 +30,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 import { useProgrammeStore } from "@/stores/ProgrammeStore";
-import { parseISO } from "date-fns";
+import { parseISO, isSameDay, isAfter, isBefore } from "date-fns";
 
 const router = useRouter();
 const activeFilter = ref("All");
@@ -57,19 +57,27 @@ onMounted(async () => {
   }
 });
 
+if (userStore.role === "Athlete") {
+  filterOptions.value.push({ label: "Mine", value: "Mine" });
+}
+
 const filteredPrograms = computed(() => {
   const today = new Date();
 
   return programmeStore.programmes.filter((p) => {
-    const programDate = parseISO(p.name);
+    const programDate = p.name.match(/^\d{4}-\d{2}-\d{2}$/)
+      ? parseISO(p.name)
+      : null;
 
     switch (activeFilter.value) {
       case "Today":
-        return programDate.toDateString() === today.toDateString();
+        return programDate && isSameDay(programDate, today);
       case "Upcoming":
-        return programDate > today;
+        return programDate && isAfter(programDate, today);
       case "Past":
-        return programDate < today;
+        return programDate && isBefore(programDate, today);
+      case "Mine":
+        return p.programme_type === "personal";
       default:
         return true;
     }
