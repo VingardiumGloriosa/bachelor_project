@@ -282,3 +282,35 @@ export const fetchTeamsService = async () => {
 
   return data;
 };
+
+export const fetchUserGoalsService = async (userId: string) => {
+  try {
+    const { data, error } = await supabase.rpc("fetch_user_goals", {
+      user_uuid: userId,
+    });
+    if (error) {
+      console.error("Error fetching user goals:", error.message);
+      throw error;
+    }
+    return data || [];
+  } catch (error) {
+    console.error("Error in fetchUserGoalsService:", error);
+    throw error;
+  }
+};
+
+export const fetchUserPRsService = async (userId: string) => {
+  try {
+    const { data, error } = await supabase.rpc("fetch_user_prs", {
+      user_uuid: userId,
+    });
+    if (error) {
+      console.error("Error fetching user PRs:", error.message);
+      throw error;
+    }
+    return data || [];
+  } catch (error) {
+    console.error("Error in fetchUserPRsService:", error);
+    throw error;
+  }
+};

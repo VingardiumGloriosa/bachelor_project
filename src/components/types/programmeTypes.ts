@@ -46,3 +46,10 @@ export interface Team {
   coach_id: string;
   name: string;
 }
+
+export interface Goal {
+  goal_id: string;
+  user_id: string;
+  exercise_id: string;
+  goal_weight: number;
+}

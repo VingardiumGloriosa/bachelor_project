@@ -6,20 +6,24 @@ import vueDevTools from "vite-plugin-vue-devtools";
 import vuetify from "vite-plugin-vuetify";
 import { VitePWA } from "vite-plugin-pwa";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
       devOptions: {
         enabled: true,
+        suppressLogs: true,
       },
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
+      includeAssets: [
+        "favicon;.ico",
+        "apple-touch-icon.png",
+        "masked-icon.svg",
+      ],
       manifest: {
-        name: "Vue 3 PWA Timer",
-        short_name: "PWA Timer",
-        description: "A customizable timer for Tabata and EMOM workouts",
+        name: "IK99 Tracker",
+        short_name: "IK99 Tracker",
+        description: "IK99 Tracker",
         theme_color: "#ffffff",
         icons: [
           {
@@ -46,7 +50,7 @@ export default defineConfig({
               cacheName: "static-resources",
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+                maxAgeSeconds: 30 * 24 * 60 * 60,
               },
             },
           },
@@ -57,11 +61,12 @@ export default defineConfig({
               cacheName: "images",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 24 * 60 * 60, // 60 days
+                maxAgeSeconds: 60 * 24 * 60 * 60,
               },
             },
           },
         ],
+        mode: "production",
       },
     }),
     vueJsx(),

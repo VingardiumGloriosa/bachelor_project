@@ -1,10 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import {
-  fetchCurrentUser,
-  fetchUserRoleService,
-  type User,
-} from "@/services/UserService";
+import { fetchCurrentUser, fetchUserRoleService } from "@/services/UserService";
+import { type User } from "@/components/types/UserTypes";
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<User | null>(null);

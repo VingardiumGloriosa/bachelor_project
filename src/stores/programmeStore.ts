@@ -10,6 +10,8 @@ import {
   fetchPersonalRecordsService,
   fetchExerciseHistoryService,
   fetchTeamsService,
+  fetchUserPRsService,
+  fetchUserGoalsService,
 } from "@/services/programmeService";
 import {
   type Programme,
@@ -27,6 +29,8 @@ export const useProgrammeStore = defineStore("programme", () => {
   const programmeId = ref<string | null>(null);
   const status = ref<string | null>(null);
   const teams = ref<Team[]>([]);
+  const goals = ref([]);
+  const prs = ref([]);
 
   const loadProgrammes = async (userId: string) => {
     isLoading.value = true;
@@ -97,6 +101,7 @@ export const useProgrammeStore = defineStore("programme", () => {
       if (data) {
         exercises.value = data;
       }
+      return data;
     } catch (err) {
       error.value = (err as Error).message;
       console.error("Error in store:", error.value);
@@ -204,6 +209,37 @@ export const useProgrammeStore = defineStore("programme", () => {
       isLoading.value = false;
     }
   };
+
+  const fetchUserGoals = async (userId: string) => {
+    try {
+      isLoading.value = true;
+      const data = await fetchUserGoalsService(userId);
+      goals.value = data;
+      return data;
+    } catch (err) {
+      error.value = err.message || "Failed to fetch user goals.";
+      console.error("Error in fetchUserGoals:", error.value);
+      return [];
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const fetchUserPRs = async (userId: string) => {
+    try {
+      isLoading.value = true;
+      const data = await fetchUserPRsService(userId);
+      prs.value = data;
+      return data;
+    } catch (err) {
+      error.value = err.message || "Failed to fetch user PRs.";
+      console.error("Error in fetchUserPRs:", error.value);
+      return [];
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     programmes,
     isLoading,
@@ -217,6 +253,8 @@ export const useProgrammeStore = defineStore("programme", () => {
     fetchExercises,
     exercises,
     submitSet,
+    fetchUserGoals,
+    fetchUserPRs,
     fetchPersonalRecord,
     fetchPersonalRecords,
     fetchExerciseHistory,
