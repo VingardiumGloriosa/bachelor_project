@@ -5,6 +5,11 @@ fix graphs
 fix edit profile
 fix color grading of calendar
 fix color grading of creating programme
+write unit tests
+write storybook
+
+PRE EXAM
+Setup demo account
 --
 
 POST HANDIN
