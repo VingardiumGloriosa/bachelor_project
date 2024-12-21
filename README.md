@@ -56,7 +56,7 @@ To streamline development and debugging:
 ### **Clone the Repository**
 
 ```bash
-git clone https://github.com/vingardium_gloriosa/bachelor_project.git
+git clone https://github.com/VingardiumGloriosa/bachelor_project.git
 cd bachelor_project
 ```
 
