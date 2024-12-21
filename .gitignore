@@ -32,3 +32,5 @@ coverage
 src/supabase/supabase.js
 
 .vercel
+
+*storybook.log

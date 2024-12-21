@@ -2,7 +2,6 @@ HIGHEST PRIORITY
 fix signup
 fix edit profile
 write unit tests
-write storybook
 
 PRE EXAM
 Setup demo account
