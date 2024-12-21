@@ -1,8 +1,6 @@
 HIGHEST PRIORITY
 fix signup
 fix edit profile
-fix color grading of calendar
-fix color grading of creating programme
 write unit tests
 write storybook
 
@@ -14,9 +12,3 @@ POST HANDIN
 setup goal creation
 setup add PR functionalitz
 setup add comments functionalitz
-show coach staus under coahc profile
---
-
-LOWEST PRIORITY
-fix graph
-- ugly atm
