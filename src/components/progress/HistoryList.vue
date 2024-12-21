@@ -1,6 +1,5 @@
 <template>
   <Title title="History" />
-
   <div id="filter-chips">
     <v-chip
       v-for="option in uniqueRepSchemes"
@@ -12,13 +11,11 @@
       {{ option }} Reps
     </v-chip>
   </div>
-
   <v-container class="lift-card mb-6">
     <div v-if="visibleRecords.length > 0">
       <h3 class="table-title">
         {{ props.selectedExercise?.name }} - {{ activeFilter }}RM
       </h3>
-
       <v-table>
         <thead>
           <tr>

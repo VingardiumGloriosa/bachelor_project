@@ -13,7 +13,6 @@
       >Finish Workout</v-btn
     >
   </v-container>
-
   <v-container v-else>
     <p>Loading...</p>
   </v-container>

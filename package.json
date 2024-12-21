@@ -20,6 +20,7 @@
     "@supabase/supabase-js": "^2.46.1",
     "chart.js": "^4.4.6",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
     "pinia": "^2.2.6",
     "vite-plugin-vuetify": "^2.0.4",
     "vue": "^3.5.12",

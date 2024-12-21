@@ -2,8 +2,6 @@
   <arrow-back @click="close" class="backbtn" />
   <v-container class="general">
     <h1>Sign-in</h1>
-
-    <!-- Step 1: Request OTP -->
     <v-form v-if="!otpSent" @submit.prevent="requestOTP">
       <p>Email Address</p>
       <v-text-field
@@ -25,8 +23,6 @@
       <p class="text-grey text-center">Don't have an account?</p>
       <p class="text-center" @click="signup">Create Account</p>
     </v-form>
-
-    <!-- Step 2: Enter OTP -->
     <v-form v-else @submit.prevent="verifyOTP">
       <p>Enter OTP</p>
       <v-text-field

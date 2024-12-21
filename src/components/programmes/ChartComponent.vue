@@ -7,13 +7,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, computed } from "vue";
 import Chart from "chart.js/auto";
-import {
-  format,
-  parseISO,
-  startOfWeek,
-  startOfMonth,
-  startOfYear,
-} from "date-fns";
+import { format, startOfWeek, startOfMonth, startOfYear } from "date-fns";
 
 const props = defineProps({
   records: {
