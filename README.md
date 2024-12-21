@@ -1,39 +1,126 @@
-# bachelor_project
+# **Strength in Simplicity: Weightlifting App for Program Management & Progress Monitoring**
 
-This template should help get you started developing with Vue 3 in Vite.
+This project is a mobile application designed to streamline the management of weightlifting training programs and progress tracking for **IK99**, a weightlifting club in Copenhagen. It integrates training program distribution, workout logging, and progress visualization into a single, user-friendly platform.
 
-## Recommended IDE Setup
+---
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## **Project Overview**
 
-## Type Support for `.vue` Imports in TS
+The app focuses on:
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Efficient training program management
+- Seamless progress monitoring
+- Offline and real-time functionality for enhanced usability
 
-## Customize configuration
+---
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## **Technologies Used**
 
-## Project Setup
+### **Frontend**
 
-```sh
+- **Frameworks:** Vue.js, Vuetify
+- **State Management:** Pinia
+- **Router:** Vue Router
+- **Development Tools:** TypeScript, Storybook
+
+### **Backend**
+
+- **Platform:** Supabase (Authentication, Database, Real-time Sync)
+- **Database:** PostgreSQL
+
+### **Progressive Web App (PWA)**
+
+- Offline access and app-like experience with PWA capabilities
+
+### **Testing and Quality**
+
+- **Unit Testing:** Vitest
+- **Code Quality:** ESLint
+- **Data Visualization:** Chart.js
+
+---
+
+## **Recommended IDE Setup**
+
+To streamline development and debugging:
+
+1. Use **VSCode** as the IDE.
+2. Install **Volar** and disable Vetur for optimal Vue development.
+3. Configure TypeScript support for `.vue` imports:
+   - Utilize the `vue-tsc` tool for type checking.
+
+---
+
+## **Installation & Setup**
+
+### **Clone the Repository**
+
+```bash
+git clone https://github.com/vingardium_gloriosa/bachelor_project.git
+cd bachelor_project
+```
+
+### **Install Dependencies**
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+---
 
-```sh
+## **Running the Development Server**
+
+To start the application with hot reload for local development:
+
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+---
 
-```sh
+## **Build for Production**
+
+To compile and optimize the app for production deployment:
+
+```bash
 npm run build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+---
 
-```sh
-npm run test:unit
+## **Testing**
+
+Run unit tests implemented with Vitest:
+
+```bash
+npx run vitest
 ```
+
+---
+
+## **Project Structure**
+
+This project follows a modular and scalable structure:
+
+1. **Frontend Code**
+   - Vue.js components for user interfaces
+   - Pinia for state management
+   - Vue Router for navigation
+2. **Backend Code**
+   - Supabase for authentication and real-time database functionality
+3. **Testing**
+   - Vitest for unit testing
+   - ESLint for maintaining code quality
+
+---
+
+## **Key Features**
+
+- **User Authentication:** Password-free OTP-based login via Supabase.
+- **Workout Tracking:** Athletes can log sessions, track progress, and visualize performance.
+- **PWA Support:** Enables offline functionality and an app-like mobile experience.
+- **Real-Time Syncing:** Changes to data or training programs are instantly updated, powered by Supabase.
+
+## **License**
+
+This project is licensed under [MIT License](LICENSE). Contributions are welcome!
