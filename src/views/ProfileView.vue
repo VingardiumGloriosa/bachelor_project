@@ -23,7 +23,10 @@
 
       <div class="bottom-left">
         <div class="team-name">
-          {{ userStore.user.team?.name || "TO BE FIXED" }}
+          <span v-if="userStore.user.roles?.[0] === 'Coach'">Coach</span>
+          <span v-else>
+            {{ userStore.user.team?.name || "Independent Athlete" }}
+          </span>
         </div>
 
         <div class="email">
@@ -65,26 +68,34 @@ import { useToastStore, ToastType } from "@/stores/ToastStore";
 
 const router = useRouter();
 const userStore = useUserStore();
-const loading = ref(true);
+const loading = ref(false);
 const isEditing = ref(false);
 const authStore = useAuthStore();
 const toastStore = useToastStore();
 
 onMounted(async () => {
   try {
-    await userStore.loadUser();
+    loading.value = true;
 
+    await userStore.loadUser();
     if (!userStore.user) {
       router.push({ name: "signin" });
-    } else {
-      await getProfile(userStore.user.id);
+      return;
     }
+
+    await getProfile(userStore.user.id);
   } catch (error) {
     console.error("Error fetching user:", error);
     router.push({ name: "signin" });
+  } finally {
+    loading.value = false;
   }
 });
 
+/**
+ * Fetch profile details for the current user.
+ * @param userId The user's UUID.
+ */
 async function getProfile(userId: string) {
   try {
     loading.value = true;
@@ -93,15 +104,16 @@ async function getProfile(userId: string) {
       user_id: userId,
     });
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    userStore.user.first_name = data.first_name;
-    userStore.user.last_name = data.last_name;
-    userStore.user.email = data.email;
-    userStore.user.roles = data.roles;
-    userStore.user.team = data.team;
+    userStore.user = {
+      ...userStore.user,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      email: data.email,
+      roles: data.roles,
+      team: data.team,
+    };
   } catch (error) {
     console.error("Error fetching profile:", error);
     toastStore.toast("Failed to load profile.", ToastType.ERROR);
@@ -110,6 +122,9 @@ async function getProfile(userId: string) {
   }
 }
 
+/**
+ * Save updated profile information.
+ */
 async function saveProfile() {
   try {
     loading.value = true;

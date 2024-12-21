@@ -27,6 +27,10 @@ coverage
 *.sln
 *.sw?
 .env    
+.ToDo.txt
 
 *.tsbuildinfo
-src/supabase/supabase.js
+
+.vercel
+
+*storybook.log

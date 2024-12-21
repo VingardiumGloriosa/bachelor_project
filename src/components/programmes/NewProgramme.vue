@@ -91,13 +91,13 @@
           </v-table>
           <div class="btn-group mt-2">
             <v-btn
-              class="btn-tertiary"
+              class="btn-tertiary add-remove"
               @click="addSet(workoutIndex, exerciseIndex)"
             >
               + Add Set
             </v-btn>
             <v-btn
-              class="btn-alert"
+              class="btn-alert add-remove"
               @click="removeExercise(workoutIndex, exerciseIndex)"
             >
               Remove Exercise
@@ -268,5 +268,15 @@ const removeExercise = (workoutIndex: number, exerciseIndex: number) => {
 
 .full {
   width: 100%;
+}
+
+.v-table {
+  background-color: var(--light-grey);
+  color: white;
+}
+
+.add-remove {
+  font-size: 12px !important;
+  padding: 12px !important;
 }
 </style>

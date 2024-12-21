@@ -1,26 +1,41 @@
 <template>
   <div class="rectangle">
     <v-progress-circular
-      model-value="95"
+      :model-value="Math.min((currentWeight / goalWeight) * 100, 100)"
       :size="75"
       :width="5"
       color="var(--primary)"
       class="text-center"
     >
-      <span class="headline text-h6">{{ props.percentage }}%</span>
+      <span class="headline text-h6"
+        >{{
+          Math.min((currentWeight / goalWeight) * 100, 100).toFixed(0)
+        }}%</span
+      >
     </v-progress-circular>
-    <Title title="Snatch" />
-    <p class="text-grey text-body-2">4 kg to go</p>
+    <Title :title="exerciseName" />
+    <p class="text-grey text-body-2">
+      {{ Math.max(goalWeight - currentWeight, 0).toFixed(1) }} kg to go
+    </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import Title from "./TitleElement.vue";
+import { defineProps } from "vue";
 
 const props = defineProps({
-  percentage: {
+  goalWeight: {
     type: Number,
-    default: 95,
+    required: true,
+  },
+  currentWeight: {
+    type: Number,
+    required: true,
+  },
+  exerciseName: {
+    type: String,
+    required: true,
   },
 });
 </script>

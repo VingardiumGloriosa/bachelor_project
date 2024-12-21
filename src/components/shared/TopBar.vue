@@ -1,7 +1,9 @@
 <template>
   <div class="top-bar">
     <div class="logo">
-      <img src="@/assets/logo.svg" alt="Logo" />
+      <router-link to="/home">
+        <img src="@/assets/logo.svg" alt="Logo" />
+      </router-link>
     </div>
     <div class="profile">
       <router-link to="/profile">

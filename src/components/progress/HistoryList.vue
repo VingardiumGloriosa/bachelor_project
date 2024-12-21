@@ -1,6 +1,5 @@
 <template>
   <Title title="History" />
-
   <div id="filter-chips">
     <v-chip
       v-for="option in uniqueRepSchemes"
@@ -12,13 +11,11 @@
       {{ option }} Reps
     </v-chip>
   </div>
-
   <v-container class="lift-card mb-6">
-    <div v-if="filteredRecords.length > 0">
+    <div v-if="visibleRecords.length > 0">
       <h3 class="table-title">
         {{ props.selectedExercise?.name }} - {{ activeFilter }}RM
       </h3>
-
       <v-table>
         <thead>
           <tr>
@@ -27,12 +24,22 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(record, index) in filteredRecords" :key="index">
+          <tr v-for="(record, index) in visibleRecords" :key="index">
             <td>{{ record.date }}</td>
             <td>{{ record.weight }}</td>
           </tr>
         </tbody>
       </v-table>
+      <div class="see-more-container">
+        <v-btn
+          v-if="showSeeMoreButton"
+          variant="text"
+          color="primary"
+          @click="loadMore"
+        >
+          See More
+        </v-btn>
+      </div>
       <ChartComponent :records="filteredRecords" />
     </div>
     <div v-else>
@@ -57,6 +64,7 @@ const props = defineProps<{
 }>();
 
 const history = ref([]);
+const visibleCount = ref(5);
 
 watch(
   () => props.selectedExercise,
@@ -80,6 +88,7 @@ watch(
 const activeFilter = ref("");
 const setFilter = (filter) => {
   activeFilter.value = filter;
+  visibleCount.value = 5;
 };
 
 const filteredRecords = computed(() => {
@@ -99,6 +108,18 @@ const filteredRecords = computed(() => {
     return [];
   }
 });
+
+const visibleRecords = computed(() => {
+  return filteredRecords.value.slice(0, visibleCount.value);
+});
+
+const showSeeMoreButton = computed(() => {
+  return visibleCount.value < filteredRecords.value.length;
+});
+
+const loadMore = () => {
+  visibleCount.value += 5;
+};
 
 const uniqueRepSchemes = computed(() => {
   if (history.value && history.value.length > 0) {
@@ -142,5 +163,11 @@ canvas {
 .v-table td {
   border-top: 2px solid white;
   border-bottom: 2px solid white;
+}
+
+.see-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 </style>

@@ -39,7 +39,6 @@ const toastStore = useToastStore();
 
 const handleSignup = async () => {
   try {
-    // Request magic link via Supabase
     await auth.signInWithMagicLink(email.value);
     toastStore.toast(
       "Check your email for the magic link to log in!",

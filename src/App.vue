@@ -5,7 +5,7 @@ import { supabase } from "@/supabase/supabase";
 import TopBar from "@/components/shared/TopBar.vue";
 import CoachNavBar from "./components/shared/CoachNavBar.vue";
 import AthleteNavBar from "./components/shared/AthleteNavBar.vue";
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/UserStore";
 import { VSonner } from "vuetify-sonner";
 
 const isSignedIn = ref(false);
@@ -23,12 +23,7 @@ onMounted(async () => {
     isSignedIn.value = true;
     const role = await userStore.fetchUserRole(user.id);
     userRole.value = role;
-
-    if (role === "Athlete") {
-      router.push({ name: "home-athlete" });
-    } else if (role === "Coach") {
-      router.push({ name: "home-coach" });
-    }
+    router.push({ name: "home" });
   } else {
     router.push({ name: "landing" });
   }
@@ -38,12 +33,7 @@ onMounted(async () => {
       isSignedIn.value = true;
       const role = await userStore.fetchUserRole(session.user.id);
       userRole.value = role;
-
-      if (role === "Athlete") {
-        router.push({ name: "home-athlete" });
-      } else if (role === "Coach") {
-        router.push({ name: "home-coach" });
-      }
+      router.push({ name: "home" });
     } else if (event === "SIGNED_OUT") {
       isSignedIn.value = false;
       userRole.value = null;

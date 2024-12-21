@@ -90,7 +90,7 @@ const fetchWorkoutPRs = async () => {
   }
 };
 
-const getPRPlaceholder = (exerciseId, percentage) => {
+const getPRPlaceholder = (exerciseId: string, percentage: number) => {
   const matchingPR = workoutPRs.value
     .flat()
     .find((pr) => pr.exercise_id === exerciseId);

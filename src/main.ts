@@ -10,8 +10,11 @@ import router from "./router";
 import "./assets/variables.css";
 
 const app = createApp(App);
-const vuetify = createVuetify();
-
+const vuetify = createVuetify({
+  theme: {
+    defaultTheme: "dark",
+  },
+});
 app.use(createPinia());
 app.use(router);
 app.use(vuetify);
