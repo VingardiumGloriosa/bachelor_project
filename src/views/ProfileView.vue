@@ -77,6 +77,7 @@ onMounted(async () => {
     if (!userStore.user) {
       router.push({ name: "signin" });
     } else {
+      console.log(userStore.user);
       await getProfile(userStore.user.id);
     }
   } catch (error) {
@@ -88,15 +89,13 @@ onMounted(async () => {
 async function getProfile(userId: string) {
   try {
     loading.value = true;
-
+    console.log(userId);
     const { data, error } = await supabase.rpc("fetch_user_profile", {
       user_id: userId,
     });
-
     if (error) {
       throw error;
     }
-
     userStore.user.first_name = data.first_name;
     userStore.user.last_name = data.last_name;
     userStore.user.email = data.email;

@@ -22,3 +22,19 @@ export const fetchCurrentUser = async () => {
   }
   return data.user;
 };
+
+export const createAthleteProfileService = async (
+  email: string,
+  firstName: string,
+  lastName: string
+) => {
+  const { error } = await supabase.rpc("create_profile", {
+    p_email: email,
+    p_first_name: firstName,
+    p_last_name: lastName,
+  });
+  if (error) {
+    console.error("Error creating athlete profile:", error.message);
+    throw error;
+  }
+};
