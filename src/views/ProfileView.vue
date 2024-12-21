@@ -23,7 +23,10 @@
 
       <div class="bottom-left">
         <div class="team-name">
-          {{ userStore.user.team?.name || "TO BE FIXED" }}
+          <span v-if="userStore.user.roles?.[0] === 'Coach'">Coach</span>
+          <span v-else>
+            {{ userStore.user.team?.name || "Independent Athlete" }}
+          </span>
         </div>
 
         <div class="email">
