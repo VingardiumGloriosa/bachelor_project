@@ -8,6 +8,11 @@ import {
   type Set,
 } from "@/components/types/ProgrammeTypes";
 
+/**
+ * Fetch programmes associated with a user.
+ * @param userId - The user's UUID.
+ * @returns A list of programmes or `null` if an error occurs.
+ */
 export const fetchUserProgrammes = async (
   userId: string
 ): Promise<Programme[] | null> => {
@@ -27,6 +32,11 @@ export const fetchUserProgrammes = async (
   }
 };
 
+/**
+ * Fetch details of a specific programme.
+ * @param programmeId - The ID of the programme to fetch.
+ * @returns The details of the programme.
+ */
 export const fetchProgrammeDetails = async (
   programmeId: string
 ): Promise<Programme> => {
@@ -48,6 +58,15 @@ export const fetchProgrammeDetails = async (
   }
 };
 
+/**
+ * Submit a new programme.
+ * @param programme_name - The name of the programme.
+ * @param programme_type - The type of programme (e.g., personal or team).
+ * @param user_uuid - The user's UUID.
+ * @param team_uuid - The team's UUID.
+ * @param workouts - The workouts associated with the programme.
+ * @returns The submission status and programme ID (if created).
+ */
 export const submitProgrammeService = async (
   programme_name: string,
   programme_type: string,
@@ -82,6 +101,10 @@ export const submitProgrammeService = async (
   }
 };
 
+/**
+ * Fetch all exercises available.
+ * @returns A list of exercises.
+ */
 export const fetchExercisesService = async (): Promise<Exercise> => {
   try {
     const { data, error } = await supabase.rpc("fetch_exercises");
@@ -97,6 +120,13 @@ export const fetchExercisesService = async (): Promise<Exercise> => {
   }
 };
 
+/**
+ * Fetch a specific personal record (PR) for a user and exercise.
+ * @param userId - The user's UUID.
+ * @param exerciseId - The exercise ID.
+ * @param repScheme - The rep scheme for the PR.
+ * @returns The personal record details.
+ */
 export const fetchPersonalRecordService = async (
   userId: string,
   exerciseId: string,
@@ -120,6 +150,12 @@ export const fetchPersonalRecordService = async (
   }
 };
 
+/**
+ * Fetch all personal records (PRs) for a specific exercise.
+ * @param userId - The user's UUID.
+ * @param exerciseId - The exercise ID.
+ * @returns A list of personal records.
+ */
 export const fetchPersonalRecordsService = async (
   userId: string,
   exerciseId: string
@@ -141,6 +177,12 @@ export const fetchPersonalRecordsService = async (
   }
 };
 
+/**
+ * Fetch the exercise history for a user and exercise.
+ * @param userId - The user's UUID.
+ * @param exerciseId - The exercise ID.
+ * @returns A list of exercise history records.
+ */
 export const fetchExerciseHistoryService = async (
   userId: string,
   exerciseId: string
@@ -163,7 +205,13 @@ export const fetchExerciseHistoryService = async (
   }
 };
 
-const postNewPersonalRecord = async (
+/**
+ * Submit workout sets and check for PR achievements.
+ * @param exerciseId - The exercises's UUID.
+ * @param userId - The user's UUID.
+ * @returns null.
+ */
+export const postNewPersonalRecord = async (
   userId: string,
   exerciseId: string,
   set: Set
@@ -185,6 +233,12 @@ const postNewPersonalRecord = async (
   }
 };
 
+/**
+ * Submit workout sets and check for PR achievements.
+ * @param workouts - The list of workouts and their sets.
+ * @param userId - The user's UUID.
+ * @returns Submission status and achieved PRs.
+ */
 export const submitSetService = async (
   workouts: Workout[],
   userId: string
@@ -271,6 +325,10 @@ export const submitSetService = async (
   }
 };
 
+/**
+ * Fetch all teams available for a coach.
+ * @returns A list of teams.
+ */
 export const fetchTeamsService = async () => {
   const { data, error } = await supabase.rpc("fetch_teams");
 
@@ -282,6 +340,11 @@ export const fetchTeamsService = async () => {
   return data;
 };
 
+/**
+ * Fetch user-specific goals.
+ * @param userId - The user's UUID.
+ * @returns A list of goals.
+ */
 export const fetchUserGoalsService = async (userId: string) => {
   try {
     const { data, error } = await supabase.rpc("fetch_user_goals", {
@@ -298,6 +361,11 @@ export const fetchUserGoalsService = async (userId: string) => {
   }
 };
 
+/**
+ * Fetch user-specific personal records (PRs).
+ * @param userId - The user's UUID.
+ * @returns A list of PRs.
+ */
 export const fetchUserPRsService = async (userId: string) => {
   try {
     const { data, error } = await supabase.rpc("fetch_user_prs", {

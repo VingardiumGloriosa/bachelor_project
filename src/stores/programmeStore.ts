@@ -20,6 +20,9 @@ import {
   type Team,
 } from "@/components/types/ProgrammeTypes";
 
+/**
+ * Pinia store for managing programmes, workouts, exercises, and user-specific records.
+ */
 export const useProgrammeStore = defineStore("programme", () => {
   const programmes = ref<Programme[]>([]);
   const exercises = ref<Exercise[]>([]);
@@ -32,15 +35,17 @@ export const useProgrammeStore = defineStore("programme", () => {
   const goals = ref([]);
   const prs = ref([]);
 
+  /**
+   * Load all programmes for a user.
+   * @param userId - The user's UUID.
+   */
   const loadProgrammes = async (userId: string) => {
     isLoading.value = true;
     error.value = null;
 
     try {
       const data = await fetchUserProgrammes(userId);
-      if (data) {
-        programmes.value = data;
-      }
+      if (data) programmes.value = data;
     } catch (err) {
       error.value = (err as Error).message;
       console.error("Error in store:", error.value);
@@ -49,6 +54,11 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Fetch details of a specific programme.
+   * @param programmeId - The ID of the programme to fetch.
+   * @returns The programme details.
+   */
   const getProgrammeDetails = async (programmeId: string) => {
     isLoading.value = true;
     error.value = null;
@@ -64,6 +74,11 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Submit a new programme.
+   * @param programme - The programme object to submit.
+   * @param userId - The user's UUID.
+   */
   const submitProgramme = async (
     programme: Programme,
     userId: string
@@ -92,15 +107,17 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Fetch all exercises available.
+   * @returns The list of exercises.
+   */
   const fetchExercises = async () => {
     isLoading.value = true;
     error.value = null;
 
     try {
       const data = await fetchExercisesService();
-      if (data) {
-        exercises.value = data;
-      }
+      if (data) exercises.value = data;
       return data;
     } catch (err) {
       error.value = (err as Error).message;
@@ -110,15 +127,16 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Fetch all teams available to a coach.
+   */
   const fetchTeams = async () => {
     isLoading.value = true;
     error.value = null;
 
     try {
       const data = await fetchTeamsService();
-      if (data) {
-        teams.value = data;
-      }
+      if (data) teams.value = data;
     } catch (err) {
       error.value = (err as Error).message;
       console.error("Error in store:", error.value);
@@ -127,6 +145,12 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Submit workout sets and check for new personal records.
+   * @param workouts - The list of workouts and their sets.
+   * @param userId - The user's UUID.
+   * @returns Submission status and achieved PRs.
+   */
   const submitSet = async (
     workouts: Workout[],
     userId: string
@@ -136,9 +160,9 @@ export const useProgrammeStore = defineStore("programme", () => {
   }> => {
     isLoading.value = true;
     error.value = null;
+
     try {
       const response = await submitSetService(workouts, userId);
-
       if (response) {
         status.value = response.status;
         return response;
@@ -154,6 +178,13 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Fetch a specific personal record for a user.
+   * @param userId - The user's UUID.
+   * @param exerciseId - The exercise ID.
+   * @param repScheme - The rep scheme for the record.
+   * @returns The personal record.
+   */
   const fetchPersonalRecord = async (
     userId: string,
     exerciseId: string,
@@ -178,6 +209,11 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Fetch all personal records for a specific exercise.
+   * @param userId - The user's UUID.
+   * @param exerciseId - The exercise ID.
+   */
   const fetchPersonalRecords = async (userId: string, exerciseId: string) => {
     isLoading.value = true;
     error.value = null;
@@ -194,6 +230,11 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Fetch exercise history for a specific user and exercise.
+   * @param userId - The user's UUID.
+   * @param exerciseId - The exercise ID.
+   */
   const fetchExerciseHistory = async (userId: string, exerciseId: string) => {
     isLoading.value = true;
     error.value = null;
@@ -210,6 +251,11 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Fetch the user's goals.
+   * @param userId - The user's UUID.
+   * @returns The list of goals.
+   */
   const fetchUserGoals = async (userId: string) => {
     try {
       isLoading.value = true;
@@ -217,7 +263,7 @@ export const useProgrammeStore = defineStore("programme", () => {
       goals.value = data;
       return data;
     } catch (err) {
-      error.value = err.message || "Failed to fetch user goals.";
+      error.value = (err as Error).message || "Failed to fetch user goals.";
       console.error("Error in fetchUserGoals:", error.value);
       return [];
     } finally {
@@ -225,6 +271,11 @@ export const useProgrammeStore = defineStore("programme", () => {
     }
   };
 
+  /**
+   * Fetch the user's personal records (PRs).
+   * @param userId - The user's UUID.
+   * @returns The list of personal records.
+   */
   const fetchUserPRs = async (userId: string) => {
     try {
       isLoading.value = true;
@@ -232,7 +283,7 @@ export const useProgrammeStore = defineStore("programme", () => {
       prs.value = data;
       return data;
     } catch (err) {
-      error.value = err.message || "Failed to fetch user PRs.";
+      error.value = (err as Error).message || "Failed to fetch user PRs.";
       console.error("Error in fetchUserPRs:", error.value);
       return [];
     } finally {

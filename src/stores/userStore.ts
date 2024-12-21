@@ -4,8 +4,8 @@ import { fetchCurrentUser, fetchUserRoleService } from "@/services/UserService";
 import { type User } from "@/components/types/UserTypes";
 
 export const useUserStore = defineStore("user", () => {
-  const user = ref<User | null>(null); // Ensure it's either a User or null.
-  const role = ref<string | null>(null); // Track the user's primary role.
+  const user = ref<User | null>(null);
+  const role = ref<string | null>(null);
 
   /**
    * Load the current user using Supabase auth.

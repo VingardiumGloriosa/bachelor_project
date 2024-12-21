@@ -1,18 +1,36 @@
 import { supabase } from "@/supabase/supabase";
 
+/**
+ * A service class for managing authentication operations.
+ */
 export class AuthService {
+  /**
+   * Sends a magic link to the user's email for authentication.
+   * @param email - The user's email address.
+   * @throws If the operation fails.
+   */
   static async signInWithMagicLink(email: string) {
     const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) throw new Error(error.message);
     return true;
   }
 
+  /**
+   * Logs out the current user.
+   * @throws If the operation fails.
+   */
   static async signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
     return true;
   }
 
+  /**
+   * Creates a new user in the database.
+   * @param userDetails - An object containing user details (firstName, lastName, email, roleId).
+   * @returns The newly created user object.
+   * @throws If the operation fails.
+   */
   static async createUser(userDetails: {
     firstName: string;
     lastName: string;
@@ -35,6 +53,12 @@ export class AuthService {
     return data;
   }
 
+  /**
+   * Assigns a role to an existing user.
+   * @param userId - The user's UUID.
+   * @param roleId - The role's ID.
+   * @throws If the operation fails.
+   */
   static async assignUserRole(userId: string, roleId: number) {
     const { error } = await supabase.from("userroles").insert([
       {
@@ -45,11 +69,19 @@ export class AuthService {
     if (error) throw new Error(error.message);
   }
 
+  /**
+   * Stores a user's session in Supabase.
+   * @param userEmail - The user's email address.
+   * @throws If the operation fails.
+   */
   static async storeUserSession(userEmail: string) {
     const { error } = await supabase.auth.updateUser({ email: userEmail });
     if (error) throw new Error(error.message);
   }
 
+  /**
+   * Listens for changes in the authentication state and updates the user accordingly.
+   */
   static async handleAuthStateChange() {
     supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session?.user) {
@@ -77,16 +109,28 @@ export class AuthService {
       }
     });
   }
+
+  /**
+   * Sends an OTP to the user's email for authentication.
+   * @param email - The user's email address.
+   * @throws If the operation fails.
+   */
   static async signInWithOTP(email: string) {
     const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) throw new Error(error.message);
   }
 
+  /**
+   * Verifies the provided OTP for authentication.
+   * @param email - The user's email address.
+   * @param otp - The OTP received by the user.
+   * @throws If the operation fails.
+   */
   static async verifyOTP(email: string, otp: string) {
     const { error } = await supabase.auth.verifyOtp({
       email,
       token: otp,
-      type: "email", // Ensure this matches Supabase auth type
+      type: "email",
     });
     if (error) throw new Error(error.message);
   }
