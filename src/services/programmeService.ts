@@ -129,7 +129,6 @@ export const fetchPersonalRecordsService = async (
       user_uuid: userId,
       ex_id: exerciseId,
     });
-
     if (error) {
       console.error("Error fetching personal record:", error);
       throw new Error(error.message);

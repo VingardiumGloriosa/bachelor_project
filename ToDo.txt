@@ -1,7 +1,5 @@
 HIGHEST PRIORITY
-Pre submit bugs
 fix signup
-fix graphs 
 fix edit profile
 fix color grading of calendar
 fix color grading of creating programme
