@@ -11,7 +11,7 @@ import {
   fetchTeamsService,
   fetchUserGoalsService,
   fetchUserPRsService,
-} from "@/services/programmeService";
+} from "@/services/ProgrammeService";
 import { supabase } from "@/supabase/supabase";
 
 vi.mock("@/supabase/supabase", () => ({

@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { AuthService } from "@/services/AuthService";
 import { useRouter } from "vue-router";
+import { supabase } from "@/supabase/supabase";
 
 /**
  * Pinia store to manage authentication.
@@ -105,6 +106,36 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  /**
+   * Logs in as the demo user.
+   */
+  const loginAsDemo = async () => {
+    try {
+      loading.value = true;
+      const token = await AuthService.fetchDemoAccessToken();
+
+      if (!token) {
+        throw new Error("Failed to fetch demo access token");
+      }
+
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: token,
+      });
+
+      if (sessionError) {
+        throw new Error("Failed to set session for demo user");
+      }
+
+      console.log("Logged in as demo user");
+      router.push("/home"); // Navigate to the home page after login
+    } catch (err) {
+      error.value = (err as Error).message;
+      console.error("Error logging in as demo user:", error.value);
+    } finally {
+      loading.value = false;
+    }
+  };
+
   // Initialize auth state change listener.
   AuthService.handleAuthStateChange();
 
@@ -117,5 +148,6 @@ export const useAuthStore = defineStore("auth", () => {
     signOut,
     signInWithOTP,
     verifyOTP,
+    loginAsDemo,
   };
 });

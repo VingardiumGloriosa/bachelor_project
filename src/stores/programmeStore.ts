@@ -12,7 +12,7 @@ import {
   fetchTeamsService,
   fetchUserPRsService,
   fetchUserGoalsService,
-} from "@/services/programmeService";
+} from "@/services/ProgrammeService";
 import {
   type Programme,
   type Workout,

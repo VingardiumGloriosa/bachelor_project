@@ -3,22 +3,34 @@
     <img :src="Logo" alt="App Logo" class="logo" />
     <h1>Welcome</h1>
     <v-btn class="btn-primary" @click="goToSignIn">Sign In</v-btn>
-    <v-btn class="btn-secondary" @click="goToSignUp">Sign Up</v-btn>
+    <v-btn class="btn-secondary" @click="loginAsDemo"
+      >Log in as Demo User</v-btn
+    >
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/AuthStore";
+import { useToastStore, ToastType } from "@/stores/ToastStore";
 import Logo from "@/assets/logo.svg";
 
 const router = useRouter();
-
-const goToSignUp = () => {
-  router.push("/signup");
-};
+const auth = useAuthStore();
+const toastStore = useToastStore();
 
 const goToSignIn = () => {
   router.push("/signin");
+};
+
+const loginAsDemo = async () => {
+  try {
+    await auth.loginAsDemo();
+    toastStore.toast("Logged in as demo user!", ToastType.SUCCESS);
+    router.push("/home");
+  } catch (error) {
+    toastStore.toast("Failed to log in as demo user.", ToastType.ERROR);
+  }
 };
 </script>
 

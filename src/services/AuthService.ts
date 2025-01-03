@@ -134,4 +134,23 @@ export class AuthService {
     });
     if (error) throw new Error(error.message);
   }
+  /**
+   * Fetches the access token for the demo account.
+   * @returns Access token for the demo user.
+   */
+  static async fetchDemoAccessToken(): Promise<string | null> {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: "gloriagrofova@outlook.com", // Replace with your demo account's email
+        password: "glg", // Replace with a dummy password
+      });
+
+      if (error) throw new Error(error.message);
+
+      return data.session.access_token;
+    } catch (error) {
+      console.error("Error fetching demo access token:", error.message);
+      return null;
+    }
+  }
 }

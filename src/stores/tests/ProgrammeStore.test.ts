@@ -13,7 +13,7 @@ import {
   fetchTeamsService,
   fetchUserGoalsService,
   fetchUserPRsService,
-} from "@/services/programmeService";
+} from "@/services/ProgrammeService";
 
 vi.mock("@/services/programmeService", () => ({
   fetchUserProgrammes: vi.fn(),
